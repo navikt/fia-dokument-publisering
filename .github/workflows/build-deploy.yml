@@ -76,7 +76,7 @@ jobs:
         env:
           IMAGE: ${{ needs.build.outputs.image }}
           CLUSTER: dev-gcp
-          RESOURCE: .nais/nais.yaml
+          RESOURCE: .nais/main.yaml
           VARS: .nais/dev.yaml
 
   trivy-scan:
