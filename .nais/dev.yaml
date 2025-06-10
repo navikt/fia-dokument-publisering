@@ -1,1 +1,5 @@
 # Ingen miljøkonfig tilgjengelig for dev ennå
+limitsCpu: 500m
+limitsMemory: 512Mi
+requestsCpu: 200m
+requestsMemory: 256Mi

@@ -1,12 +1,20 @@
 apiVersion: nais.io/v1alpha1
 kind: Application
 metadata:
+  labels:
+    team: pia
   name: fia-dokument-publisering
   namespace: pia
 
 spec:
   image: {{image}}
-
+  resources:
+    limits:
+      cpu: {{limitsCpu}}
+      memory: {{limitsMemory}}
+    requests:
+      cpu: {{requestsCpu}}
+      memory: {{requestsMemory}}
   liveness:
     path: /internal/isalive
     port: 8080
@@ -17,7 +25,6 @@ spec:
     port: 8080
     initialDelay: 20
     timeout: 60
-
   observability:
     autoInstrumentation:
       enabled: true
