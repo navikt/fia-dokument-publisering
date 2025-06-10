@@ -14,6 +14,7 @@ repositories {
 val ktorVersion = "3.1.3"
 val kotlinVersion = "2.1.20"
 val logbackVersion = "1.5.18"
+val logstashLogbackEncoderVersion = "8.1"
 val kotestVersion = "5.9.1"
 val testcontainersVersion = "1.21.0"
 
@@ -24,6 +25,7 @@ dependencies {
 
     // -- logs
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
+    implementation("net.logstash.logback:logstash-logback-encoder:${logstashLogbackEncoderVersion}")
 
     // ----------- test
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
