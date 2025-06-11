@@ -24,6 +24,6 @@ class PostgresContainer(
         }
 
     fun envVars() =
-        "NAIS_DATABASE_FIA_DOKUMENT_PUBLISERING_DB_JDBC_URL" to
+        "NAIS_DATABASE_FIA_DOKUMENT_PUBLISERING_FIA_DOKUMENT_PUBLISERING_DB_JDBC_URL" to
             "jdbc:postgresql://$containerAlias:5432/$dbNavn?password=${container.password}&user=${container.username}"
 }

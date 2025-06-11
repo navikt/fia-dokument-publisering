@@ -16,5 +16,5 @@ class NaisEnvironment(
 }
 
 class Database(
-    val jdbcUrl: String = hentMiljøVariabel("NAIS_DATABASE_FIA_DOKUMENT_PUBLISERING_DB_JDBC_URL"),
+    val jdbcUrl: String = hentMiljøVariabel("NAIS_DATABASE_FIA_DOKUMENT_PUBLISERING_FIA_DOKUMENT_PUBLISERING_DB_JDBC_URL"),
 )
