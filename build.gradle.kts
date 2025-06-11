@@ -25,11 +25,20 @@ dependencies {
 
     // -- logs
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
-    implementation("net.logstash.logback:logstash-logback-encoder:${logstashLogbackEncoderVersion}")
+    implementation("net.logstash.logback:logstash-logback-encoder:$logstashLogbackEncoderVersion")
+
+    // -- DB
+    implementation("org.postgresql:postgresql:42.7.5")
+    implementation("com.zaxxer:HikariCP:6.3.0")
+    implementation("org.flywaydb:flyway-database-postgresql:11.8.0")
+    // implementation("com.github.seratch:kotliquery:1.9.1")
 
     // ----------- test
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
     testImplementation("org.testcontainers:testcontainers:$testcontainersVersion")
+    testImplementation("org.testcontainers:postgresql:$testcontainersVersion")
+    // testImplementation("org.testcontainers:kafka:${testcontainersVersion}")
+
     testImplementation("io.ktor:ktor-client-cio:$ktorVersion")
     testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
 
@@ -51,6 +60,7 @@ dependencies {
 
 tasks {
     shadowJar {
+        mergeServiceFiles()
         manifest {
             attributes("Main-Class" to "no.nav.fia.dokument.publisering.ApplicationKt")
         }

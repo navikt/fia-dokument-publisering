@@ -10,6 +10,10 @@ private val log = LoggerFactory.getLogger("no.nav.fia.dokument.publisering")
 
 fun main() {
     val applikasjonsHelse = ApplikasjonsHelse()
+
+    val dataSource = createDataSource(database = NaisEnvironment().database)
+    runMigration(dataSource = dataSource)
+
     val applikasjonsServer =
         embeddedServer(
             factory = Netty,

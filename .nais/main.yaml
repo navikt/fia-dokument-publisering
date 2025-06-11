@@ -25,6 +25,13 @@ spec:
     port: 8080
     initialDelay: 20
     timeout: 60
+  gcp:
+    sqlInstances:
+      - type: POSTGRES_17
+        tier: {{dbTier}}
+        diskAutoresize: {{dbAutoresizeDisk}}
+        databases:
+          - name: fia-dokument-publisering-db
   observability:
     autoInstrumentation:
       enabled: true

@@ -17,15 +17,24 @@ class TestContainerHelper {
     companion object {
         val log: Logger = LoggerFactory.getLogger(TestContainerHelper::class.java)
         private val network = Network.newNetwork()
+        val postgresContainer = PostgresContainer(network = network)
 
         val fiaDokumentPubliseringContainer =
             GenericContainer(
                 ImageFromDockerfile().withDockerfile(Path("./Dockerfile")),
             )
+                .dependsOn(postgresContainer.container)
                 .withNetwork(network)
                 .withExposedPorts(8080)
                 .withLogConsumer(Slf4jLogConsumer(log).withPrefix("fia-dokument-publisering").withSeparateOutputStreams())
                 .waitingFor(HttpWaitStrategy().forPath("/internal/isready").withStartupTimeout(Duration.ofSeconds(20)))
+                .withEnv(
+                    mapOf(
+                        "NAIS_CLUSTER_NAME" to "lokal",
+                    ).plus(
+                        postgresContainer.envVars(),
+                    ),
+                )
                 .apply {
                     start()
                 }
