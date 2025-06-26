@@ -1,0 +1,28 @@
+name: Deploy fia-dokument-publisering topics
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .nais/topics/** # Deploy topics ved endringer i topics-mappen
+      - .github/workflows/topics.yaml # Deploy topics ved endringer i topics.yaml
+
+permissions:
+  id-token: write
+
+jobs:
+  deploy:
+    strategy:
+      matrix:
+        cluster: [dev] # TODO: legg til prod cluster når det er klart
+    name: Deploy app to ${{ matrix.cluster }}
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy topics to ${{ matrix.cluster }}
+        uses: nais/deploy/actions/deploy@v2
+        env:
+          CLUSTER: ${{ matrix.cluster }}-gcp
+          RESOURCE: .nais/topics/dokument-publisering-topic.yaml
+          VARS: .nais/${{ matrix.cluster }}.yaml
