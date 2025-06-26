@@ -14,7 +14,7 @@ jobs:
   deploy:
     strategy:
       matrix:
-        cluster: [dev] # TODO: legg til prod cluster når det er klart
+        cluster: [dev] # TODO: legg til prod cluster senere
     name: Deploy app to ${{ matrix.cluster }}
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
