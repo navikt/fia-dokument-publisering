@@ -64,7 +64,7 @@ jobs:
   deploy-dev-branch:
     permissions:
       id-token: write
-    name: Deploy app to dev
+    name: Deploy branch to dev
     needs: build
     if: github.ref == 'refs/heads/ny-mikrotjeneste'
     runs-on: ubuntu-latest
