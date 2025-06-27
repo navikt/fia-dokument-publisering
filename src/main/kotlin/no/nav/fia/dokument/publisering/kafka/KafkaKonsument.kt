@@ -47,7 +47,6 @@ class KafkaKonsument(
             konsument.poll(Duration.ofMillis(10))
                 .map { melding ->
                     log.info("Mottok kafkamelding med nøkkel: ${melding.key()}")
-                    log.info("Mottok kafkamelding med value: ${melding.value()}")
                     melding.value()
                 }.forEach { dokument ->
                     log.info("Nå skal jeg prosessere en kafkamelding")

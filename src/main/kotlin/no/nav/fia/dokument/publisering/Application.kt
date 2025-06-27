@@ -20,8 +20,6 @@ fun main() {
     val dataSource = createDataSource(database = NaisEnvironment().database)
     runMigration(dataSource = dataSource)
 
-    settOppKonsumenter(applikasjonsHelse = applikasjonsHelse, dataSource = dataSource)
-
     val applikasjonsServer =
         embeddedServer(
             factory = Netty,
@@ -31,6 +29,7 @@ fun main() {
         )
 
     applikasjonsHelse.ready = true
+    settOppKonsumenter(applikasjonsHelse = applikasjonsHelse, dataSource = dataSource)
 
     Runtime.getRuntime().addShutdownHook(
         Thread {
