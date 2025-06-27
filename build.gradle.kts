@@ -22,6 +22,7 @@ dependencies {
     // -- ktor
     implementation("io.ktor:ktor-server-core-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktorVersion")
 
     // -- logs
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
@@ -31,13 +32,17 @@ dependencies {
     implementation("org.postgresql:postgresql:42.7.5")
     implementation("com.zaxxer:HikariCP:6.3.0")
     implementation("org.flywaydb:flyway-database-postgresql:11.8.0")
-    // implementation("com.github.seratch:kotliquery:1.9.1")
+    implementation("com.github.seratch:kotliquery:1.9.1")
+
+    // -- div
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
+    implementation("org.apache.kafka:kafka-clients:3.9.0")
 
     // ----------- test
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
     testImplementation("org.testcontainers:testcontainers:$testcontainersVersion")
     testImplementation("org.testcontainers:postgresql:$testcontainersVersion")
-    // testImplementation("org.testcontainers:kafka:${testcontainersVersion}")
+    testImplementation("org.testcontainers:kafka:$testcontainersVersion")
 
     testImplementation("io.ktor:ktor-client-cio:$ktorVersion")
     testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")

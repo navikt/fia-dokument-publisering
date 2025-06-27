@@ -9,21 +9,20 @@ import org.testcontainers.containers.output.Slf4jLogConsumer
 import org.testcontainers.containers.wait.strategy.HttpWaitStrategy
 import org.testcontainers.images.builder.ImageFromDockerfile
 import java.time.Duration
-import kotlin.apply
 import kotlin.io.path.Path
-import kotlin.jvm.java
 
 class TestContainerHelper {
     companion object {
         val log: Logger = LoggerFactory.getLogger(TestContainerHelper::class.java)
         private val network = Network.newNetwork()
         val postgresContainer = PostgresContainer(network = network)
+        val kafkaContainer = KafkaContainer(network = network)
 
         val fiaDokumentPubliseringContainer =
             GenericContainer(
                 ImageFromDockerfile().withDockerfile(Path("./Dockerfile")),
             )
-                .dependsOn(postgresContainer.container)
+                .dependsOn(postgresContainer.container, kafkaContainer.container)
                 .withNetwork(network)
                 .withExposedPorts(8080)
                 .withLogConsumer(Slf4jLogConsumer(log).withPrefix("fia-dokument-publisering").withSeparateOutputStreams())
@@ -33,6 +32,8 @@ class TestContainerHelper {
                         "NAIS_CLUSTER_NAME" to "lokal",
                     ).plus(
                         postgresContainer.envVars(),
+                    ).plus(
+                        kafkaContainer.getEnv(),
                     ),
                 )
                 .apply {

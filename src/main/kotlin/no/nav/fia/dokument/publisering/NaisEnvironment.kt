@@ -8,6 +8,12 @@ class NaisEnvironment(
     companion object {
         val cluster = Cluster.valueOf(hentMiljøVariabel("NAIS_CLUSTER_NAME", "prod-gcp"))
 
+        // -- kafka
+        val kafkaBrokers: String = hentMiljøVariabel("KAFKA_BROKERS")
+        val kafkaTruststoreLocation: String = hentMiljøVariabel("KAFKA_TRUSTSTORE_PATH")
+        val kafkaKeystoreLocation: String = hentMiljøVariabel("KAFKA_KEYSTORE_PATH")
+        val kafkaCredstorePassword: String = hentMiljøVariabel("KAFKA_CREDSTORE_PASSWORD")
+
         fun hentMiljøVariabel(
             variabelNavn: String,
             defaultVerdi: String? = null,
