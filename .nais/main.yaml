@@ -25,6 +25,8 @@ spec:
     port: 8080
     initialDelay: 20
     timeout: 60
+  kafka:
+    pool: {{kafkaPool}}
   gcp:
     sqlInstances:
       - type: POSTGRES_17
