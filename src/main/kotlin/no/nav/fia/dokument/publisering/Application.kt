@@ -2,9 +2,13 @@ package no.nav.fia.dokument.publisering
 
 import ApplikasjonsHelse
 import DokumentService
+import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
+import io.ktor.server.application.install
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
+import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import kotlinx.serialization.json.Json
 import no.nav.fia.dokument.publisering.db.DokumentRepository
 import no.nav.fia.dokument.publisering.kafka.KafkaConfig
 import no.nav.fia.dokument.publisering.kafka.KafkaKonsument
@@ -20,12 +24,15 @@ fun main() {
     val dataSource = createDataSource(database = NaisEnvironment().database)
     runMigration(dataSource = dataSource)
 
+    val dokumentRepository = DokumentRepository(dataSource)
+    val dokumentService = DokumentService(dokumentRepository)
+
     val applikasjonsServer =
         embeddedServer(
             factory = Netty,
             port = 8080,
             host = "0.0.0.0",
-            module = { fiaDokumentPubliseringApi(applikasjonsHelse = applikasjonsHelse) },
+            module = { fiaDokumentPubliseringApi(applikasjonsHelse = applikasjonsHelse, dokumentService = dokumentService) },
         )
 
     applikasjonsHelse.ready = true
@@ -43,8 +50,14 @@ fun main() {
     applikasjonsServer.start(wait = true)
 }
 
-fun Application.fiaDokumentPubliseringApi(applikasjonsHelse: ApplikasjonsHelse) {
-    configureRouting(applikasjonsHelse = applikasjonsHelse)
+fun Application.fiaDokumentPubliseringApi(
+    applikasjonsHelse: ApplikasjonsHelse,
+    dokumentService: DokumentService,
+) {
+    install(ContentNegotiation) {
+        json(Json { ignoreUnknownKeys = true })
+    }
+    configureRouting(applikasjonsHelse = applikasjonsHelse, dokumentService = dokumentService)
 }
 
 private fun settOppKonsumenter(

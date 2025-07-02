@@ -128,6 +128,7 @@ class KafkaContainer(
     fun etDokumentTilPublisering(
         referanseId: String = UUID.randomUUID().toString(),
         type: Dokument.Type = Dokument.Type.Behovsvurdering,
+        orgnr: String = "987654321",
     ): DokumentKafkaDto {
         val sendtTilPublisering = LocalDateTime.now()
         val navIdent = "NavIdent"
@@ -135,7 +136,7 @@ class KafkaContainer(
             referanseId = referanseId,
             type = type,
             opprettetAv = navIdent,
-            orgnr = "987654321",
+            orgnr = orgnr,
             saksnummer = "01HPGQR1626B531V7BXEQK172M",
             samarbeidId = 44,
             samarbeidNavn = "Samarbeid 1",

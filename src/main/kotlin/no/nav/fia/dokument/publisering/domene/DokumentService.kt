@@ -1,5 +1,6 @@
 import kotlinx.datetime.toKotlinLocalDateTime
 import kotlinx.serialization.json.Json
+import no.nav.fia.dokument.publisering.api.DokumentDto
 import no.nav.fia.dokument.publisering.db.DokumentRepository
 import no.nav.fia.dokument.publisering.domene.Dokument
 import no.nav.fia.dokument.publisering.kafka.dto.DokumentKafkaDto
@@ -21,6 +22,11 @@ class DokumentService(
         log.info("Skal lagre et nytt dokument med referanseId: '${dokumentKafkaDto.referanseId}'")
         dokumentRepository.lagreDokument(dokument = dokumentKafkaDto.tilDomene())
     }
+
+    fun hentDokumenter(
+        orgnr: String,
+        status: Dokument.Status,
+    ): List<Dokument> = dokumentRepository.hentDokumenter(orgnr = orgnr, status = status)
 }
 
 fun DokumentKafkaDto.tilDomene(): Dokument =
@@ -39,4 +45,14 @@ fun DokumentKafkaDto.tilDomene(): Dokument =
         opprettet = LocalDateTime.now().toKotlinLocalDateTime(),
         publisert = null,
         sistEndret = null,
+    )
+
+fun List<Dokument>.tilDto() = this.map { it.tilDto() }
+
+fun Dokument.tilDto(): DokumentDto =
+    DokumentDto(
+        dokumentId = dokumentId.toString(),
+        type = type.name,
+        samarbeidNavn = samarbeidNavn,
+        innhold = innhold,
     )

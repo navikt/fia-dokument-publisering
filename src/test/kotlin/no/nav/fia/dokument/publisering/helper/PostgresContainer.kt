@@ -46,4 +46,12 @@ class PostgresContainer(
             return rs.getObject(1) as T
         }
     }
+
+    fun performUpdate(sql: String) {
+        dataSource.connection.use { connection ->
+            connection.createStatement().use { statement ->
+                statement.execute(sql)
+            }
+        }
+    }
 }

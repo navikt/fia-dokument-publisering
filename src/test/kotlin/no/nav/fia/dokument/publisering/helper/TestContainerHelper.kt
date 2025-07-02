@@ -1,6 +1,10 @@
 package no.nav.fia.dokument.publisering.helper
 
 import io.kotest.matchers.string.shouldContain
+import io.ktor.client.call.body
+import no.nav.fia.dokument.publisering.api.DOKUMENT_PUBLSERING_PATH
+import no.nav.fia.dokument.publisering.api.DokumentDto
+import no.nav.fia.dokument.publisering.helper.TestContainerHelper.Companion.fiaDokumentPubliseringContainer
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.testcontainers.containers.GenericContainer
@@ -43,3 +47,8 @@ class TestContainerHelper {
 }
 
 infix fun GenericContainer<*>.shouldContainLog(regex: Regex) = logs shouldContain regex
+
+suspend fun hentDokumenter(orgnr: String) =
+    fiaDokumentPubliseringContainer.performGet(
+        url = "$DOKUMENT_PUBLSERING_PATH/$orgnr",
+    ).body<List<DokumentDto>>()
