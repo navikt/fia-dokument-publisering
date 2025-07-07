@@ -11,7 +11,7 @@ class DokumentApiTest {
     @Test
     fun `skal hente alle dokumenter for en virksomhet`() {
         val dokumentKafkaDto = kafkaContainer.etDokumentTilPublisering()
-        val nøkkel = "${dokumentKafkaDto.samarbeidId}-${dokumentKafkaDto.referanseId}-${dokumentKafkaDto.type.name}"
+        val nøkkel = "${dokumentKafkaDto.samarbeid.id}-${dokumentKafkaDto.referanseId}-${dokumentKafkaDto.type.name}"
 
         kafkaContainer.sendMeldingPåKafka(
             nøkkel = nøkkel,
@@ -19,7 +19,7 @@ class DokumentApiTest {
         )
 
         runBlocking {
-            hentDokumenter(dokumentKafkaDto.orgnr) shouldHaveSize 0
+            hentDokumenter(dokumentKafkaDto.virksomhet.orgnummer) shouldHaveSize 0
 
             postgresContainer.performUpdate(
                 """
@@ -30,7 +30,7 @@ class DokumentApiTest {
                 """.trimIndent(),
             )
 
-            hentDokumenter(dokumentKafkaDto.orgnr) shouldHaveSize 1
+            hentDokumenter(dokumentKafkaDto.virksomhet.orgnummer) shouldHaveSize 1
         }
     }
 }

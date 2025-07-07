@@ -4,6 +4,7 @@ import no.nav.fia.dokument.publisering.api.DokumentDto
 import no.nav.fia.dokument.publisering.db.DokumentRepository
 import no.nav.fia.dokument.publisering.domene.Dokument
 import no.nav.fia.dokument.publisering.kafka.dto.DokumentKafkaDto
+import no.nav.fia.dokument.publisering.kafka.dto.SpørreundersøkelseInnholdIDokumentDto
 import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
 import java.util.UUID
@@ -34,14 +35,14 @@ fun DokumentKafkaDto.tilDomene(): Dokument =
         dokumentId = UUID.randomUUID(),
         referanseId = UUID.fromString(referanseId),
         type = type,
-        opprettetAv = opprettetAv,
+        opprettetAv = dokumentOpprettetAv,
         status = Dokument.Status.OPPRETTET,
-        orgnr = orgnr,
-        saksnummer = saksnummer,
-        samarbeidId = samarbeidId,
-        samarbeidNavn = samarbeidNavn,
-        innhold = innhold,
-        sendtTilPublisering = sendtTilPublisering,
+        orgnr = virksomhet.orgnummer,
+        saksnummer = sak.saksnummer,
+        samarbeidId = samarbeid.id,
+        samarbeidNavn = samarbeid.navn,
+        innhold = Json.encodeToString(serializer = SpørreundersøkelseInnholdIDokumentDto.serializer(), value = innhold),
+        sendtTilPublisering = LocalDateTime.now().toKotlinLocalDateTime(),
         opprettet = LocalDateTime.now().toKotlinLocalDateTime(),
         publisert = null,
         sistEndret = null,

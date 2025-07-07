@@ -19,9 +19,11 @@ class Dokument(
     val publisert: LocalDateTime?,
     val sistEndret: LocalDateTime?,
 ) {
+
     enum class Type {
-        Behovsvurdering,
-        Evaluering,
+        EVALUERING,
+        BEHOVSVURDERING,
+        SAMARBEIDSPLAN,
     }
 
     enum class Status {

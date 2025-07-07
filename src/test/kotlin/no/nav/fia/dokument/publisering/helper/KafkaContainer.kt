@@ -7,6 +7,10 @@ import kotlinx.datetime.toKotlinLocalDateTime
 import no.nav.fia.dokument.publisering.domene.Dokument
 import no.nav.fia.dokument.publisering.kafka.KafkaTopics
 import no.nav.fia.dokument.publisering.kafka.dto.DokumentKafkaDto
+import no.nav.fia.dokument.publisering.kafka.dto.SakDto
+import no.nav.fia.dokument.publisering.kafka.dto.SamarbeidDto
+import no.nav.fia.dokument.publisering.kafka.dto.SpørreundersøkelseInnholdIDokumentDto
+import no.nav.fia.dokument.publisering.kafka.dto.VirksomhetDto
 import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.admin.AdminClient
 import org.apache.kafka.clients.admin.AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG
@@ -22,13 +26,9 @@ import org.testcontainers.containers.wait.strategy.HostPortWaitStrategy
 import org.testcontainers.kafka.ConfluentKafkaContainer
 import org.testcontainers.utility.DockerImageName
 import java.time.Duration
-import java.time.LocalDateTime
+import java.time.LocalDateTime.now
 import java.util.TimeZone
 import java.util.UUID
-import kotlin.apply
-import kotlin.collections.firstOrNull
-import kotlin.text.contains
-import kotlin.to
 
 class KafkaContainer(
     network: Network,
@@ -124,24 +124,34 @@ class KafkaContainer(
             StringSerializer(),
         )
 
-    // --
     fun etDokumentTilPublisering(
-        referanseId: String = UUID.randomUUID().toString(),
-        type: Dokument.Type = Dokument.Type.Behovsvurdering,
+        referanseId: UUID = UUID.randomUUID(),
+        type: Dokument.Type = Dokument.Type.BEHOVSVURDERING,
         orgnr: String = "987654321",
     ): DokumentKafkaDto {
-        val sendtTilPublisering = LocalDateTime.now()
         val navIdent = "NavIdent"
         return DokumentKafkaDto(
-            referanseId = referanseId,
+            sak = SakDto(
+                saksnummer = "01HPGQR1626B531V7BXEQK172M",
+                navenhet = "NAV Enhet",
+            ),
+            virksomhet = VirksomhetDto(
+                orgnummer = orgnr,
+                navn = "Virksomhet 1",
+            ),
+            samarbeid = SamarbeidDto(
+                id = 44,
+                navn = "Samarbeid 1",
+            ),
+            referanseId = referanseId.toString(),
             type = type,
-            opprettetAv = navIdent,
-            orgnr = orgnr,
-            saksnummer = "01HPGQR1626B531V7BXEQK172M",
-            samarbeidId = 44,
-            samarbeidNavn = "Samarbeid 1",
-            innhold = """{}""",
-            sendtTilPublisering = sendtTilPublisering.toKotlinLocalDateTime(),
+            dokumentOpprettetAv = navIdent,
+            innhold = SpørreundersøkelseInnholdIDokumentDto(
+                id = referanseId.toString(),
+                spørreundersøkelseOpprettetAv = "X12345",
+                fullførtTidspunkt = now().toKotlinLocalDateTime(),
+                spørsmålMedSvarPerTema = emptyList(),
+            ),
         )
     }
 }

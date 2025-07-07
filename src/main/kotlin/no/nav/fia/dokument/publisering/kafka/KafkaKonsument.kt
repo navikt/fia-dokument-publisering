@@ -49,7 +49,6 @@ class KafkaKonsument(
                     log.info("Mottok kafkamelding med nøkkel: ${melding.key()}")
                     melding.value()
                 }.forEach { dokument ->
-                    log.info("Nå skal jeg prosessere en kafkamelding")
                     block(dokument)
                 }
             konsument.commitSync()
