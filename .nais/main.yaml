@@ -25,6 +25,13 @@ spec:
     port: 8080
     initialDelay: 20
     timeout: 60
+  tokenx:
+    enabled: true
+  accessPolicy:
+    inbound:
+      rules:
+        - application: fia-arbeidsgiver
+          namespace: pia
   kafka:
     pool: {{kafkaPool}}
   gcp:
