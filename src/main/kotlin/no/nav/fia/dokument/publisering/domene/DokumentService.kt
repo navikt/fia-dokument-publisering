@@ -20,6 +20,14 @@ class DokumentService(
     fun håndterKafkaMelding(kafkamelding: String) {
         val dokumentKafkaDto = json.decodeFromString<DokumentKafkaDto>(kafkamelding)
 
+        /*
+          TODO: implement denne slik at det skal være mulig å committe meldingen i Kafka etter dokumentet er lagret.
+           => Hvis det er feil ETTER 'Opprett dokument', så skal meldingen committe.
+           - Opprett dokument (insert) --> produserer et dokumentId {if error IKKE commit Kafka meldingen}
+           - POST til pdfgen (if error commit melding, status = FEILET_PDF_GENERERING eller status = PDF_GENERERT)
+           - Lagre generert PDF som en Blob i DB (if error commit melding, status = FEILET_PDF_GENERERING)
+           - POST til journalpost (if error commit melding, STATUS: FEILET_JOURNALFØRING eller status = PUBLISERT)
+         */
         log.info("Skal lagre et nytt dokument med referanseId: '${dokumentKafkaDto.referanseId}'")
         dokumentRepository.lagreDokument(dokument = dokumentKafkaDto.tilDomene())
     }

@@ -20,6 +20,8 @@ val testcontainersVersion = "1.21.0"
 
 dependencies {
     // -- ktor
+    implementation("io.ktor:ktor-server-auth-jvm:${ktorVersion}")
+    implementation("io.ktor:ktor-server-auth-jwt-jvm:${ktorVersion}")
     implementation("io.ktor:ktor-server-core-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")
     implementation("io.ktor:ktor-client-core:$ktorVersion")
@@ -41,6 +43,9 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
     implementation("org.apache.kafka:kafka-clients:3.9.0")
 
+    // Logg requests (kan sløyfes i vanlig drift)
+    implementation("io.ktor:ktor-server-call-logging:${ktorVersion}")
+
     // ----------- test
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
     testImplementation("org.testcontainers:testcontainers:$testcontainersVersion")
@@ -49,6 +54,12 @@ dependencies {
 
     testImplementation("io.ktor:ktor-client-cio:$ktorVersion")
     testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
+    // Mock-oauth2-server
+    testImplementation("no.nav.security:mock-oauth2-server:2.2.1")
+    // JWT utilities
+    testImplementation("com.nimbusds:nimbus-jose-jwt:10.3.1")
+
+
 
     constraints {
         testImplementation("org.apache.commons:commons-compress") {

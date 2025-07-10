@@ -8,16 +8,14 @@ import io.ktor.server.routing.get
 import no.nav.fia.dokument.publisering.domene.Dokument
 import tilDto
 
-const val DOKUMENT_PUBLSERING_PATH = "/dokumenter"
+const val DOKUMENT_PUBLISERING_PATH = "/dokument"
 
 fun Route.dokumentPubliseringRoutes(dokumentService: DokumentService) {
-    get("$DOKUMENT_PUBLSERING_PATH/{orgnr}") {
+    get("$DOKUMENT_PUBLISERING_PATH/{orgnr}") {
         val orgnr = call.parameters["orgnr"] ?: return@get call.respond(
             status = HttpStatusCode.BadRequest,
             message = "Ugyldig orgnr",
         )
-
-        // TODO: valider tilganger og rettigheter
 
         call.respond(
             status = HttpStatusCode.OK,

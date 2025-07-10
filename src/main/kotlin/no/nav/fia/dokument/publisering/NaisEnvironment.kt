@@ -24,3 +24,11 @@ class NaisEnvironment(
 class Database(
     val jdbcUrl: String = hentMiljøVariabel("NAIS_DATABASE_FIA_DOKUMENT_PUBLISERING_FIA_DOKUMENT_PUBLISERING_DB_JDBC_URL"),
 )
+
+class TokenxValidering(
+    val tokenxIssuer: String = System.getenv("TOKEN_X_ISSUER"),
+    val tokenxJwksUri: String = System.getenv("TOKEN_X_JWKS_URI"),
+    val tokenxClientId: String = System.getenv("TOKEN_X_CLIENT_ID"),
+    //val tokenxPrivateJwk: String = System.getenv("TOKEN_X_PRIVATE_JWK"),
+    //val tokenXTokenEndpoint: String = System.getenv("TOKEN_X_TOKEN_ENDPOINT"),
+)

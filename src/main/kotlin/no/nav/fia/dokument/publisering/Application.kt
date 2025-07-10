@@ -7,7 +7,10 @@ import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
+import io.ktor.server.plugins.calllogging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.request.httpMethod
+import io.ktor.server.request.uri
 import kotlinx.serialization.json.Json
 import no.nav.fia.dokument.publisering.db.DokumentRepository
 import no.nav.fia.dokument.publisering.kafka.KafkaConfig
@@ -40,7 +43,7 @@ fun main() {
 
     Runtime.getRuntime().addShutdownHook(
         Thread {
-            log.info("Stopper applikajsonen fra shutdown hook")
+            log.info("Stopper applikasjonen fra shutdown hook")
 
             applikasjonsHelse.ready = false
             applikasjonsHelse.alive = false
@@ -57,6 +60,18 @@ fun Application.fiaDokumentPubliseringApi(
     install(ContentNegotiation) {
         json(Json { ignoreUnknownKeys = true })
     }
+
+    install(CallLogging) {
+        // TODO: best å fjerne denne i drift (unødvendig)
+        format { call ->
+            val httpMethod = call.request.httpMethod.value
+            val uri = call.request.uri
+            val status = call.response.status()
+            "[CallLogging] Response status: $status, HTTP method: $httpMethod, Uri: $uri"
+        }
+    }
+
+    configureSecurity(tokenxValidering = TokenxValidering())
     configureRouting(applikasjonsHelse = applikasjonsHelse, dokumentService = dokumentService)
 }
 
