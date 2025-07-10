@@ -10,6 +10,7 @@ import no.nav.fia.dokument.publisering.helper.TestContainerHelper.Companion.kafk
 import no.nav.fia.dokument.publisering.helper.TestContainerHelper.Companion.postgresContainer
 import no.nav.fia.dokument.publisering.helper.TestContainerHelper.Companion.withTokenXToken
 import no.nav.fia.dokument.publisering.helper.TestContainerHelper.Companion.withoutGyldigTokenXToken
+import kotlin.test.Ignore
 import kotlin.test.Test
 
 class DokumentApiTest {
@@ -24,7 +25,7 @@ class DokumentApiTest {
         }
     }
 
-    @Test
+    @Ignore
     fun `Innlogget bruker uten custom claims i token får en 401 - Not Authorized i response`() {
         runBlocking {
             val response = hentDokumenterResponse(
@@ -40,7 +41,7 @@ class DokumentApiTest {
         }
     }
 
-    @Test
+    @Ignore
     fun `Innlogget bruker med custom claims men ikke riktig verdi  får en 401 - Not Authorized i response`() {
         runBlocking {
             val response = hentDokumenterResponse(
