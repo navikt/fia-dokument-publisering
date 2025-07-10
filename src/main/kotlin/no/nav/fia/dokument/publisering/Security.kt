@@ -36,10 +36,8 @@ fun Application.configureSecurity(tokenxValidering: TokenxValidering) {
                 }*/
             }
             validate { token ->
-                token.payload.claims.forEach { claim ->
-                    log.info("[DEBUG][TEMP] Validate claim '${claim.key}'")
-                }
                 log.info("[DEBUG][TEMP] Validate claim 'tilgang_fia...': ${token.payload.getClaim("tilgang_fia_ag").asString()}")
+                log.info("[DEBUG][TEMP] Validate claim 'scope': ${token.payload.getClaim("scope").asString()}")
                 JWTPrincipal(token.payload)
             }
         }
