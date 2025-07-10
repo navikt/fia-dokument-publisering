@@ -10,6 +10,7 @@ import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.calllogging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.request.httpMethod
+import io.ktor.server.request.path
 import io.ktor.server.request.uri
 import kotlinx.serialization.json.Json
 import no.nav.fia.dokument.publisering.db.DokumentRepository
@@ -63,6 +64,9 @@ fun Application.fiaDokumentPubliseringApi(
 
     install(CallLogging) {
         // TODO: best å fjerne denne i drift (unødvendig)
+        filter { call ->
+            call.request.path().startsWith("/dokument")
+        }
         format { call ->
             val httpMethod = call.request.httpMethod.value
             val uri = call.request.uri

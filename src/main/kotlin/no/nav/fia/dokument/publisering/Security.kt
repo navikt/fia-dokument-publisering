@@ -29,7 +29,7 @@ fun Application.configureSecurity(tokenxValidering: TokenxValidering) {
                 withClaimPresence("pid")
                 withClaimPresence("tilgang_fia_ag")
                 withClaim("tilgang_fia_ag") { claim: Claim, _: DecodedJWT ->
-                    claim.asString().equals("read:dokument")
+                    claim.asString().equals("read:dokument") // TODO: skal/kan vi legge til orgnr og sjekke mot URL parameter?
                 }
             }
             validate { token ->
