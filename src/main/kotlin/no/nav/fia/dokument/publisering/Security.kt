@@ -33,6 +33,7 @@ fun Application.configureSecurity(tokenxValidering: TokenxValidering) {
                 }
             }
             validate { token ->
+                println("[DEBUG] Validate claim 'tilgang_fia...': ${token.payload.getClaim("tilgang_fia_ag").asString()}")
                 JWTPrincipal(token.payload)
             }
         }

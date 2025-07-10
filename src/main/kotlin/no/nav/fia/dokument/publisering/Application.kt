@@ -2,6 +2,7 @@ package no.nav.fia.dokument.publisering
 
 import ApplikasjonsHelse
 import DokumentService
+import io.ktor.http.HttpHeaders
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
@@ -9,6 +10,7 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.calllogging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.request.header
 import io.ktor.server.request.httpMethod
 import io.ktor.server.request.path
 import io.ktor.server.request.uri
@@ -71,7 +73,8 @@ fun Application.fiaDokumentPubliseringApi(
             val httpMethod = call.request.httpMethod.value
             val uri = call.request.uri
             val status = call.response.status()
-            "[CallLogging] Response status: $status, HTTP method: $httpMethod, Uri: $uri"
+            val harEnBearer: Boolean = call.request.header(HttpHeaders.Authorization)?.isNotBlank() == true
+            "[CallLogging] Response status: $status, HTTP method: $httpMethod, Uri: $uri, med bearer (true/false): $harEnBearer"
         }
     }
 
