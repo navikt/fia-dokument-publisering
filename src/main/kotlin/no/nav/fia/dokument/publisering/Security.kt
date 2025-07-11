@@ -1,8 +1,6 @@
 package no.nav.fia.dokument.publisering
 
 import com.auth0.jwk.JwkProviderBuilder
-import com.auth0.jwt.interfaces.Claim
-import com.auth0.jwt.interfaces.DecodedJWT
 import io.ktor.server.application.Application
 import io.ktor.server.auth.authentication
 import io.ktor.server.auth.jwt.JWTPrincipal
@@ -56,9 +54,12 @@ fun Application.configureSecurity(tokenxValidering: TokenxValidering) {
             verifier(tokenxJwkProvider, issuer = tokenxValidering.tokenxIssuer) {
                 acceptLeeway(tokenFortsattGyldigFørUtløpISekunder)
                 withAudience(tokenxValidering.tokenxClientId)
+                /*
                 withClaim(CUSTOM_CLAIM_TILGANG_FIA) { claim: Claim, _: DecodedJWT ->
                     claim.asString().startsWith("read:dokument:")
-                }
+                }*/
+                // TODO fjern disse etter vi klarer å lage et self-issued token med tilgang claim
+                withClaimPresence("pid")
             }
             validate { token ->
                 log.info("[DEBUG][TEMP] Validate claim 'tilgang_fia...': ${token.payload.getClaim(CUSTOM_CLAIM_TILGANG_FIA).asString()}")

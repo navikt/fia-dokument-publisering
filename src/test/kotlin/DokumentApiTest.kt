@@ -51,7 +51,7 @@ class DokumentApiTest {
                     claims = mapOf(
                         "acr" to "Level4",
                         "pid" to "123",
-                        "tilgang_fia_ag" to "read:noe_annet_enn_dokument"
+                        "tilgang_fia" to "read:noe_annet_enn_dokument"
                     )
                 ),
             )
