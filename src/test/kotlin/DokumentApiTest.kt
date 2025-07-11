@@ -3,6 +3,7 @@ import io.kotest.matchers.shouldBe
 import io.ktor.client.statement.bodyAsText
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
+import no.nav.fia.dokument.publisering.Security.Companion.CUSTOM_CLAIM_TILGANG_FIA
 import no.nav.fia.dokument.publisering.api.DokumentDto
 import no.nav.fia.dokument.publisering.domene.Dokument
 import no.nav.fia.dokument.publisering.helper.TestContainerHelper.Companion.hentDokumenterResponse
@@ -75,7 +76,7 @@ class DokumentApiTest {
                     claims = mapOf(
                         "acr" to "Level4",
                         "pid" to "123",
-                        "tilgang_fia_ag" to "read:dokument"
+                        CUSTOM_CLAIM_TILGANG_FIA to "read:dokument:${dokumentKafkaDto.virksomhet.orgnummer}"
                     )
                 ),
             )
@@ -98,7 +99,7 @@ class DokumentApiTest {
                     claims = mapOf(
                         "acr" to "Level4",
                         "pid" to "123",
-                        "tilgang_fia_ag" to "read:dokument"
+                        CUSTOM_CLAIM_TILGANG_FIA to "read:dokument:${dokumentKafkaDto.virksomhet.orgnummer}"
                     )
                 ),
             )

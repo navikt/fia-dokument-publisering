@@ -7,9 +7,40 @@ import io.ktor.server.application.Application
 import io.ktor.server.auth.authentication
 import io.ktor.server.auth.jwt.JWTPrincipal
 import io.ktor.server.auth.jwt.jwt
+import io.ktor.server.auth.principal
+import io.ktor.server.request.ApplicationRequest
+import no.nav.fia.dokument.publisering.Security.Companion.CUSTOM_CLAIM_TILGANG_FIA
 import org.slf4j.LoggerFactory
 import java.net.URI
 import java.util.concurrent.TimeUnit
+
+class Security() {
+
+    companion object {
+        const val CUSTOM_CLAIM_TILGANG_FIA = "tilgang_fia"
+
+        fun ApplicationRequest.tilgangClaim() =
+            call.principal<JWTPrincipal>()?.get(CUSTOM_CLAIM_TILGANG_FIA)
+                ?: throw UgyldigForespørselException("'Tilgang claim' missing in JWT")
+
+        fun String?.orgnrFraTilgangClaim(): String {
+            // Eksempel på custom claim "tilgang_fia": "read:dokument:987654321"
+            if (this.isNullOrBlank()) {
+                throw UgyldigForespørselException("Ugyldig tilgang claim: '$this'")
+            }
+
+            val orgnr = try {
+                this.split(":").getOrNull(2)
+            } catch (e: Exception) {
+                throw UgyldigForespørselException("Ugyldig tilgang claim: '$this', kunne ikke parse orgnr, pga '${e.message}'")
+            }
+            if (orgnr.isNullOrBlank()) {
+                throw UgyldigForespørselException("Ugyldig tilgang claim: '$this'. Mangler orgnr")
+            }
+            return orgnr
+        }
+    }
+}
 
 fun Application.configureSecurity(tokenxValidering: TokenxValidering) {
     val tokenxJwkProvider = JwkProviderBuilder(URI(tokenxValidering.tokenxJwksUri).toURL())
@@ -25,19 +56,12 @@ fun Application.configureSecurity(tokenxValidering: TokenxValidering) {
             verifier(tokenxJwkProvider, issuer = tokenxValidering.tokenxIssuer) {
                 acceptLeeway(tokenFortsattGyldigFørUtløpISekunder)
                 withAudience(tokenxValidering.tokenxClientId)
-                withClaim("acr") { claim: Claim, _: DecodedJWT ->
-                    claim.asString().equals("Level4") || claim.asString().equals("idporten-loa-high")
+                withClaim(CUSTOM_CLAIM_TILGANG_FIA) { claim: Claim, _: DecodedJWT ->
+                    claim.asString().startsWith("read:dokument:")
                 }
-                withClaimPresence("pid")
-                /*
-                withClaimPresence("tilgang_fia_ag") // TODO: skal/kan vi legge til orgnr og sjekke mot URL parameter?
-                withClaim("tilgang_fia_ag") { claim: Claim, _: DecodedJWT ->
-                    claim.asString().equals("read:dokument") // TODO: skal/kan vi legge til orgnr og sjekke mot URL parameter?
-                }*/
             }
             validate { token ->
-                log.info("[DEBUG][TEMP] Validate claim 'tilgang_fia...': ${token.payload.getClaim("tilgang_fia_ag").asString()}")
-                log.info("[DEBUG][TEMP] Validate claim 'scope': ${token.payload.getClaim("scope").asString()}")
+                log.info("[DEBUG][TEMP] Validate claim 'tilgang_fia...': ${token.payload.getClaim(CUSTOM_CLAIM_TILGANG_FIA).asString()}")
                 JWTPrincipal(token.payload)
             }
         }

@@ -5,6 +5,8 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
+import no.nav.fia.dokument.publisering.Security.Companion.orgnrFraTilgangClaim
+import no.nav.fia.dokument.publisering.Security.Companion.tilgangClaim
 import no.nav.fia.dokument.publisering.domene.Dokument
 import tilDto
 
@@ -17,6 +19,19 @@ fun Route.dokumentPubliseringRoutes(dokumentService: DokumentService) {
             message = "Ugyldig orgnr",
         )
 
+        if (orgnr.isEmpty()) {
+            return@get call.respond(
+                status = HttpStatusCode.BadRequest,
+                message = "Ugyldig orgnr (er tom)",
+            )
+        }
+
+        if (call.request.tilgangClaim().orgnrFraTilgangClaim() != orgnr ) {
+            return@get call.respond(
+                status = HttpStatusCode.Forbidden,
+                message = "Får ikke tilgang til dokument(er) for orgnr: '$orgnr'. Sjekk tilgangsclaim.",
+            )
+        }
         call.respond(
             status = HttpStatusCode.OK,
             message = dokumentService.hentDokumenter(orgnr = orgnr, status = Dokument.Status.PUBLISERT).tilDto(),
