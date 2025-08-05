@@ -16,7 +16,6 @@ fun Application.configureRouting(
         helse(lever = { applikasjonsHelse.alive }, klar = { applikasjonsHelse.ready })
         authenticate("tokenx") {
             // 'authenticate' validerer TokenX token
-            // + sjekker custom claim 'tilgang_fia' med verdi 'read:dokument:{ogrnr}'
             dokumentPubliseringRoutes(dokumentService = dokumentService)
         }
     }

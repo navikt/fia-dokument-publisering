@@ -24,14 +24,6 @@ fun Route.dokumentPubliseringRoutes(dokumentService: DokumentService) {
             )
         }
 
-        // TODO fjern disse etter vi klarer å lage et self-issued token med tilgang claim
-        /*
-        if (call.request.tilgangClaim().orgnrFraTilgangClaim() != orgnr ) {
-            return@get call.respond(
-                status = HttpStatusCode.Forbidden,
-                message = "Får ikke tilgang til dokument(er) for orgnr: '$orgnr'. Sjekk tilgangsclaim.",
-            )
-        }*/
         call.respond(
             status = HttpStatusCode.OK,
             message = dokumentService.hentDokumenter(orgnr = orgnr, status = Dokument.Status.PUBLISERT).tilDto(),
