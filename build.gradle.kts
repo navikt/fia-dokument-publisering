@@ -24,6 +24,7 @@ dependencies {
     implementation("io.ktor:ktor-server-auth-jwt-jvm:${ktorVersion}")
     implementation("io.ktor:ktor-server-core-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-client-core:$ktorVersion")
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-content-negotiation-jvm:$ktorVersion")
@@ -51,14 +52,13 @@ dependencies {
     testImplementation("org.testcontainers:testcontainers:$testcontainersVersion")
     testImplementation("org.testcontainers:postgresql:$testcontainersVersion")
     testImplementation("org.testcontainers:kafka:$testcontainersVersion")
-
-    testImplementation("io.ktor:ktor-client-cio:$ktorVersion")
     testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
     // Mock-oauth2-server
     testImplementation("no.nav.security:mock-oauth2-server:2.2.1")
     // JWT utilities
     testImplementation("com.nimbusds:nimbus-jose-jwt:10.3.1")
-
+    // -- validere pdfa
+    testImplementation("org.verapdf:validation-model:1.28.2")
 
 
     constraints {

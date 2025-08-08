@@ -1,6 +1,5 @@
 package no.nav.fia.dokument.publisering.helper
 
-import io.kotest.matchers.string.shouldContain
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.header
 import io.ktor.client.statement.HttpResponse
@@ -23,6 +22,7 @@ class TestContainerHelper {
         val authContainerHelper = AuthContainerHelper(network = network, log = log)
         val postgresContainer = PostgresContainer(network = network)
         val kafkaContainer = KafkaContainer(network = network)
+        val pdfgenContainer = PdfgenContainerHelper(network = network, log = log)
 
         val fiaDokumentPubliseringContainer =
             GenericContainer(
@@ -31,7 +31,8 @@ class TestContainerHelper {
                 .dependsOn(
                     authContainerHelper.container,
                     postgresContainer.container,
-                    kafkaContainer.container
+                    kafkaContainer.container,
+                    pdfgenContainer.container
                 )
                 .withNetwork(network)
                 .withExposedPorts(8080)
@@ -48,6 +49,8 @@ class TestContainerHelper {
                         postgresContainer.envVars(),
                     ).plus(
                         kafkaContainer.getEnv(),
+                    ).plus(
+                        pdfgenContainer.envVars(),
                     ),
                 )
                 .apply {
@@ -90,6 +93,3 @@ class TestContainerHelper {
         )
     }
 }
-
-infix fun GenericContainer<*>.shouldContainLog(regex: Regex) = logs shouldContain regex
-

@@ -31,7 +31,9 @@ spec:
     inbound:
       rules:
         - application: fia-arbeidsgiver
-          namespace: pia
+    outbound:
+      rules:
+        - application: pia-pdfgen
   kafka:
     pool: {{kafkaPool}}
   gcp:
@@ -51,3 +53,6 @@ spec:
       destinations:
         - id: elastic
         - id: loki
+  env:
+    - name: PIA_PDFGEN_URL
+      value: http://pia-pdfgen

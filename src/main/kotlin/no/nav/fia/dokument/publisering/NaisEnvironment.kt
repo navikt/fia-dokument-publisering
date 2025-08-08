@@ -14,6 +14,9 @@ class NaisEnvironment(
         val kafkaKeystoreLocation: String = hentMiljøVariabel("KAFKA_KEYSTORE_PATH")
         val kafkaCredstorePassword: String = hentMiljøVariabel("KAFKA_CREDSTORE_PASSWORD")
 
+        // -- integrasjoner
+        val piaPdfgenUrl: String = hentMiljøVariabel("PIA_PDFGEN_URL")
+
         fun hentMiljøVariabel(
             variabelNavn: String,
             defaultVerdi: String? = null,
@@ -29,6 +32,4 @@ class TokenxValidering(
     val tokenxIssuer: String = System.getenv("TOKEN_X_ISSUER"),
     val tokenxJwksUri: String = System.getenv("TOKEN_X_JWKS_URI"),
     val tokenxClientId: String = System.getenv("TOKEN_X_CLIENT_ID"),
-    //val tokenxPrivateJwk: String = System.getenv("TOKEN_X_PRIVATE_JWK"),
-    //val tokenXTokenEndpoint: String = System.getenv("TOKEN_X_TOKEN_ENDPOINT"),
 )
