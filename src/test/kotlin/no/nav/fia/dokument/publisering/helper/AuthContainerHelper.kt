@@ -78,9 +78,6 @@ class AuthContainerHelper(
 
     fun envVars() =
         mapOf(
-            // NAIS_TOKEN_ENDPOINT: http://127.0.0.1:7164/api/v1/token
-            //"NAIS_TOKEN_ENDPOINT" to "http://$networkalias:$port/azuread/token", // alt: http://authserver:6969/default/token
-            //"NAIS_TOKEN_ENDPOINT" to "http://$networkalias:$port/api/token",
             "TOKEN_X_CLIENT_ID" to "tokenx:fia-dokument-publisering",
             "TOKEN_X_ISSUER" to "http://$networkalias:$port/tokenx",
             "TOKEN_X_JWKS_URI" to "http://$networkalias:$port/tokenx/jwks",

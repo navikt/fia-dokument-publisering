@@ -14,7 +14,7 @@ import kotlin.test.Test
 class JournalpostContainerTest {
     @BeforeTest
     internal fun setup() {
-        texasSidecarContainer.slettAlltStub()
+        texasSidecarContainer.slettAlleStubs()
         dokarkivContainer.slettAlleJournalposter()
     }
 
@@ -45,14 +45,14 @@ class JournalpostContainerTest {
                                 fysiskDokument = "base64EncodedPdfContent",
                             ),
                         ),
-                    )
+                    ),
                 ),
                 journalfoerendeEnhet = navenhet.enhetsnummer,
                 eksternReferanseId = UUID.randomUUID().toString(),
                 sak = Sak(
                     sakstype = Sakstype.FAGSAK,
                     fagsakId = dokumentKafkaDto.sak.saksnummer,
-                    fagsaksystem = FagsakSystem.FIA
+                    fagsaksystem = FagsakSystem.FIA,
                 ),
                 kanal = Kanal.NAV_NO_UTEN_VARSLING,
                 journalposttype = JournalpostType.UTGAAENDE,

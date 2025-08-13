@@ -13,10 +13,9 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 class DokumentTest {
-
     @BeforeTest
     fun setup() {
-        texasSidecarContainer.slettAlltStub()
+        texasSidecarContainer.slettAlleStubs()
         texasSidecarContainer.stubNaisTokenEndepunkt(lagEntraIdToken())
         dokarkivContainer.slettAlleJournalposter()
     }

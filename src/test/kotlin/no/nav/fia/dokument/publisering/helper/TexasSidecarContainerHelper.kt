@@ -1,10 +1,5 @@
 package no.nav.fia.dokument.publisering.helper
 
-import kotlin.also
-import kotlin.apply
-import kotlin.jvm.java
-import kotlin.text.trimIndent
-import kotlin.to
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
@@ -26,6 +21,11 @@ import software.xdev.mockserver.model.MediaType
 import software.xdev.mockserver.model.RequestDefinition
 import software.xdev.testcontainers.mockserver.containers.MockServerContainer
 import software.xdev.testcontainers.mockserver.containers.MockServerContainer.PORT
+import kotlin.also
+import kotlin.apply
+import kotlin.jvm.java
+import kotlin.text.trimIndent
+import kotlin.to
 
 class TexasSidecarContainerHelper(
     network: Network = Network.newNetwork(),
@@ -62,10 +62,9 @@ class TexasSidecarContainerHelper(
             "NAIS_TOKEN_ENDPOINT" to "http://$networkAlias:$port/api/v1/token", // Endepunkt for å hente token
         )
 
-    fun slettAlltStub() {
+    fun slettAlleStubs() {
         slettAlleExpectations()
     }
-
 
     private fun getMockServerClient(): MockServerClient {
         if (mockServerClient == null) {
@@ -121,18 +120,17 @@ class TexasSidecarContainerHelper(
                                 resource = null,
                                 skip_cache = false,
                                 target = "api://lokalt.teamdokumenthandtering.dokarkiv/.default",
-                            )
-
+                            ),
                         ),
-                    )
+                    ),
             ).respond(
                 response().withBody(
                     """
-                        {
-                            "access_token": "$accessToken",
-                            "expires_in": 3599,
-                            "token_type": "Bearer"
-                        }
+                    {
+                        "access_token": "$accessToken",
+                        "expires_in": 3599,
+                        "token_type": "Bearer"
+                    }
                     """.trimIndent(),
                 ).withContentType(MediaType.APPLICATION_JSON_UTF_8),
             )
