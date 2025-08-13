@@ -16,6 +16,11 @@ class NaisEnvironment(
 
         // -- integrasjoner
         val piaPdfgenUrl: String = hentMiljøVariabel("PIA_PDFGEN_URL")
+        val journalpostUrl: String = hentMiljøVariabel("JOURNALPOST_V1_URL")
+        val journalpostScope: String = hentMiljøVariabel("JOURNALPOST_SCOPE")
+
+        // uthenting av maskin-til-maskin token
+        val tokenEndpoint: String = System.getenv("NAIS_TOKEN_ENDPOINT")
 
         fun hentMiljøVariabel(
             variabelNavn: String,

@@ -26,7 +26,7 @@ class DokumentApiTest {
 
     @Test
     fun `skal hente alle dokumenter for en virksomhet`() {
-        val dokumentKafkaDto = kafkaContainer.etDokumentTilPublisering()
+        val dokumentKafkaDto = kafkaContainer.etVilkårligDokumentTilPublisering()
         val nøkkel = "${dokumentKafkaDto.samarbeid.id}-${dokumentKafkaDto.referanseId}-${dokumentKafkaDto.type.name}"
 
         kafkaContainer.sendMeldingPåKafka(

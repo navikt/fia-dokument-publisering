@@ -25,6 +25,9 @@ spec:
     port: 8080
     initialDelay: 20
     timeout: 60
+  azure:
+    application:
+      enabled: true
   tokenx:
     enabled: true
   accessPolicy:
@@ -34,6 +37,8 @@ spec:
     outbound:
       rules:
         - application: pia-pdfgen
+      external:
+        - host: {{journalpostHost}}
   kafka:
     pool: {{kafkaPool}}
   gcp:
@@ -56,3 +61,7 @@ spec:
   env:
     - name: PIA_PDFGEN_URL
       value: http://pia-pdfgen
+    - name: JOURNALPOST_V1_URL
+      value: {{journalpostApi}}
+    - name: JOURNALPOST_SCOPE
+      value: {{journalpostScope}}

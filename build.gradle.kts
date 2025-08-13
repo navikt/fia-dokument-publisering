@@ -17,6 +17,7 @@ val logbackVersion = "1.5.18"
 val logstashLogbackEncoderVersion = "8.1"
 val kotestVersion = "5.9.1"
 val testcontainersVersion = "1.21.0"
+val mockServerVersion = "1.0.19"
 
 dependencies {
     // -- ktor
@@ -24,11 +25,15 @@ dependencies {
     implementation("io.ktor:ktor-server-auth-jwt-jvm:${ktorVersion}")
     implementation("io.ktor:ktor-server-core-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-client-auth:${ktorVersion}")
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-client-core:$ktorVersion")
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-content-negotiation-jvm:$ktorVersion")
     implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
+
+    // Funksjonelle operatorer
+    implementation("io.arrow-kt:arrow-core:2.1.2")
 
     // -- logs
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
@@ -55,6 +60,9 @@ dependencies {
     testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
     // Mock-oauth2-server
     testImplementation("no.nav.security:mock-oauth2-server:2.2.1")
+    // Mockserver neolight
+    testImplementation("software.xdev.mockserver:testcontainers:${mockServerVersion}")
+    testImplementation("software.xdev.mockserver:client:${mockServerVersion}")
     // JWT utilities
     testImplementation("com.nimbusds:nimbus-jose-jwt:10.3.1")
     // -- validere pdfa

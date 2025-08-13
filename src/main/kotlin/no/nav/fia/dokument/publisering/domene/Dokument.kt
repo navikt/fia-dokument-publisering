@@ -28,6 +28,7 @@ class Dokument(
 
     enum class Status {
         OPPRETTET,
+        FEILET_JOURNALFØRING,
         PUBLISERT,
     }
 }

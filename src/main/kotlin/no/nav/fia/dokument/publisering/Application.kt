@@ -15,12 +15,14 @@ import io.ktor.server.request.httpMethod
 import io.ktor.server.request.path
 import io.ktor.server.request.uri
 import kotlinx.serialization.json.Json
+import no.nav.fia.dokument.publisering.auth.EntraIdTokenAuthClient
 import no.nav.fia.dokument.publisering.db.DokumentRepository
+import no.nav.fia.dokument.publisering.journalpost.JournalpostService
 import no.nav.fia.dokument.publisering.kafka.KafkaConfig
 import no.nav.fia.dokument.publisering.kafka.KafkaKonsument
 import no.nav.fia.dokument.publisering.kafka.KafkaTopics
+import no.nav.fia.dokument.publisering.pdfgen.PiaPdfgenService
 import org.slf4j.LoggerFactory
-import javax.sql.DataSource
 
 private val log = LoggerFactory.getLogger("no.nav.fia.dokument.publisering")
 
@@ -30,19 +32,36 @@ fun main() {
     val dataSource = createDataSource(database = NaisEnvironment().database)
     runMigration(dataSource = dataSource)
 
+    val entraIdTokenAuthClient = EntraIdTokenAuthClient(tokenEndpoint = NaisEnvironment.Companion.tokenEndpoint)
+    val pdfgenService = PiaPdfgenService()
+    val journalpostService = JournalpostService(
+        pdfgenService = pdfgenService,
+        entraIdTokenAuthClient = entraIdTokenAuthClient,
+    )
     val dokumentRepository = DokumentRepository(dataSource)
-    val dokumentService = DokumentService(dokumentRepository)
+    val dokumentService = DokumentService(
+        dokumentRepository = dokumentRepository,
+        journalpostService = journalpostService,
+    )
 
     val applikasjonsServer =
         embeddedServer(
             factory = Netty,
             port = 8080,
             host = "0.0.0.0",
-            module = { fiaDokumentPubliseringApi(applikasjonsHelse = applikasjonsHelse, dokumentService = dokumentService) },
+            module = {
+                fiaDokumentPubliseringApi(
+                    applikasjonsHelse = applikasjonsHelse,
+                    dokumentService = dokumentService
+                )
+            },
         )
 
     applikasjonsHelse.ready = true
-    settOppKonsumenter(applikasjonsHelse = applikasjonsHelse, dataSource = dataSource)
+    settOppKonsumenter(
+        applikasjonsHelse = applikasjonsHelse,
+        dokumentService = dokumentService,
+    )
 
     Runtime.getRuntime().addShutdownHook(
         Thread {
@@ -84,10 +103,9 @@ fun Application.fiaDokumentPubliseringApi(
 
 private fun settOppKonsumenter(
     applikasjonsHelse: ApplikasjonsHelse,
-    dataSource: DataSource,
+    dokumentService: DokumentService,
 ) {
-    val dokumentRepository = DokumentRepository(dataSource = dataSource)
-    val dokumentService = DokumentService(dokumentRepository = dokumentRepository)
+
     val dokumentKonsument = KafkaKonsument(
         kafkaConfig = KafkaConfig(),
         kafkaTopic = KafkaTopics.DOKUMENT_PUBLISERING,

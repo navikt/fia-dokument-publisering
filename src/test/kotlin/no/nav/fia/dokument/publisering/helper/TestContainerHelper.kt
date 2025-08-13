@@ -23,6 +23,8 @@ class TestContainerHelper {
         val postgresContainer = PostgresContainer(network = network)
         val kafkaContainer = KafkaContainer(network = network)
         val pdfgenContainer = PdfgenContainerHelper(network = network, log = log)
+        val dokarkivContainer = DokarkivContainerHelper(network = network)
+        val texasSidecarContainer = TexasSidecarContainerHelper(network = network)
 
         val fiaDokumentPubliseringContainer =
             GenericContainer(
@@ -32,7 +34,9 @@ class TestContainerHelper {
                     authContainerHelper.container,
                     postgresContainer.container,
                     kafkaContainer.container,
-                    pdfgenContainer.container
+                    pdfgenContainer.container,
+                    dokarkivContainer.container,
+                    texasSidecarContainer.container,
                 )
                 .withNetwork(network)
                 .withExposedPorts(8080)
@@ -51,6 +55,10 @@ class TestContainerHelper {
                         kafkaContainer.getEnv(),
                     ).plus(
                         pdfgenContainer.envVars(),
+                    ).plus(
+                        dokarkivContainer.envVars(),
+                    ).plus(
+                        texasSidecarContainer.envVars(),
                     ),
                 )
                 .apply {
@@ -73,8 +81,11 @@ class TestContainerHelper {
             }
         }
 
+        internal fun lagEntraIdToken(): String = entraIdAccessToken().serialize()
+
         val ikkeGyldigJwtToken =
             "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30"
+
         internal fun withoutGyldigTokenXToken(): HttpRequestBuilder.() -> Unit =
             {
                 header(HttpHeaders.Authorization, "Bearer $ikkeGyldigJwtToken")
@@ -90,6 +101,13 @@ class TestContainerHelper {
             audience = audience,
             claims = claims,
             issuerId = "tokenx",
+        )
+
+        // OBS: denne genererer et fake Entra ID access token som kan brukes for testing
+        private fun entraIdAccessToken() = authContainerHelper.issueToken(
+            audience = "teamdokumenthandtering.dokarkiv",
+            claims = emptyMap(),
+            issuerId = "azuread", // Azure-ad er issuer ID for Entra ID tokens
         )
     }
 }

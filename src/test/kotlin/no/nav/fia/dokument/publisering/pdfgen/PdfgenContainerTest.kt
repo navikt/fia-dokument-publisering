@@ -3,6 +3,7 @@ package no.nav.fia.dokument.publisering.pdfgen
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.LocalDateTime
 import no.nav.fia.dokument.publisering.helper.TestContainerHelper.Companion.pdfgenContainer
+import no.nav.fia.dokument.publisering.kafka.dto.NavEnhet
 import no.nav.fia.dokument.publisering.kafka.dto.SakDto
 import no.nav.fia.dokument.publisering.kafka.dto.SamarbeidDto
 import no.nav.fia.dokument.publisering.kafka.dto.SpørsmålResultatDto
@@ -26,10 +27,13 @@ class PdfgenContainerTest {
         runBlocking {
             val pdf = pdfgenContainer.hentDokumentPdf(
                 dokument = PdfDokumentDto(
-                    publiseringsdato = "2025-07-02T10:52:03Z",
+                    publiseringsdato = LocalDateTime.parse("2025-07-02T10:52:03"),
                     sak = SakDto(
                         saksnummer = "01HXXPFZFNRKD41JWHAY321BEZ",
-                        navenhet = "Oslo Arbeidslivssenter",
+                        navenhet = NavEnhet(
+                            enhetsnummer = "1234567",
+                            enhetsnavn = "Oslo Arbeidslivssenter",
+                        ),
                     ),
                     virksomhet = VirksomhetDto(
                         orgnummer = "987654321",

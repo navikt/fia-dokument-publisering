@@ -5,3 +5,6 @@ limitsMemory: 512Mi
 requestsCpu: 200m
 requestsMemory: 256Mi
 kafkaPool: nav-prod
+journalpostHost: dokarkiv.prod-fss-pub.nais.io
+journalpostApi: https://dokarkiv.prod-fss-pub.nais.io/rest/journalpostapi/v1/journalpost
+journalpostScope: api://prod-fss.teamdokumenthandtering.dokarkiv/.default

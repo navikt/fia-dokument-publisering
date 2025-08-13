@@ -1,11 +1,13 @@
 package no.nav.fia.dokument.publisering.db
 
+import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.toJavaLocalDateTime
 import kotlinx.datetime.toKotlinLocalDateTime
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
 import no.nav.fia.dokument.publisering.domene.Dokument
+import java.time.LocalDateTime.now
 import java.util.UUID
 import javax.sql.DataSource
 
@@ -100,4 +102,31 @@ class DokumentRepository(
                 }.asList,
             )
         }
+
+    fun oppdaterDokument(
+        dokumentId: UUID,
+        status: Dokument.Status,
+        journalpostId: String? = null,
+        publisertDato: LocalDateTime? = null,
+    ) = using(sessionOf(dataSource)) { session ->
+        session.run(
+            action = queryOf(
+                statement = """
+                   UPDATE dokument SET 
+                     status = :status,
+                     journalpost_id = :journalpostId,             
+                     publisert = :publisert,
+                     sist_endret = :sist_endret
+                   WHERE dokument_id = :dokumentId
+                """.trimIndent(),
+                paramMap = mapOf(
+                    "status" to status.name,
+                    "dokumentId" to dokumentId.toString(),
+                    "journalpostId" to journalpostId,
+                    "publisert" to publisertDato?.toJavaLocalDateTime(),
+                    "sist_endret" to now(),
+                ),
+            ).asUpdate,
+        )
+    }
 }
