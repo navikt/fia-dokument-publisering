@@ -13,6 +13,7 @@ import org.testcontainers.containers.output.Slf4jLogConsumer
 import org.testcontainers.containers.wait.strategy.HttpWaitStrategy
 import org.testcontainers.images.builder.ImageFromDockerfile
 import java.time.Duration
+import java.util.UUID
 import kotlin.io.path.Path
 
 class TestContainerHelper {
@@ -41,7 +42,7 @@ class TestContainerHelper {
                 .withNetwork(network)
                 .withExposedPorts(8080)
                 .withLogConsumer(
-                    Slf4jLogConsumer(log).withPrefix("fia-dokument-publisering").withSeparateOutputStreams()
+                    Slf4jLogConsumer(log).withPrefix("fia-dokument-publisering").withSeparateOutputStreams(),
                 )
                 .waitingFor(HttpWaitStrategy().forPath("/internal/isready").withStartupTimeout(Duration.ofSeconds(20)))
                 .withEnv(
@@ -65,21 +66,31 @@ class TestContainerHelper {
                     start()
                 }
 
-
-        suspend fun hentDokumenterResponse(orgnr: String, config: HttpRequestBuilder.() -> Unit = {}): HttpResponse =
+        suspend fun hentEtPublisertDokument(
+            dokumentId: UUID,
+            config: HttpRequestBuilder.() -> Unit = {},
+        ): HttpResponse =
             fiaDokumentPubliseringContainer.performGet(
-                url = "$DOKUMENT_PUBLISERING_PATH/$orgnr",
+                url = "$DOKUMENT_PUBLISERING_PATH/$dokumentId",
                 config = config,
             )
 
-        internal fun withTokenXToken(claims: Map<String, String>): HttpRequestBuilder.() -> Unit {
-            return {
+        suspend fun hentAllePubliserteDokumenter(
+            orgnr: String,
+            config: HttpRequestBuilder.() -> Unit = {},
+        ): HttpResponse =
+            fiaDokumentPubliseringContainer.performGet(
+                url = "$DOKUMENT_PUBLISERING_PATH/orgnr/$orgnr",
+                config = config,
+            )
+
+        internal fun withTokenXToken(claims: Map<String, String>): HttpRequestBuilder.() -> Unit =
+            {
                 header(
                     HttpHeaders.Authorization,
-                    "Bearer ${tokenXAccessToken(claims = claims).serialize()}"
+                    "Bearer ${tokenXAccessToken(claims = claims).serialize()}",
                 )
             }
-        }
 
         internal fun lagEntraIdToken(): String = entraIdAccessToken().serialize()
 
@@ -90,7 +101,6 @@ class TestContainerHelper {
             {
                 header(HttpHeaders.Authorization, "Bearer $ikkeGyldigJwtToken")
             }
-
 
         private fun tokenXAccessToken(
             subject: String = "123",

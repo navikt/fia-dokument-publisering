@@ -1,3 +1,7 @@
+import arrow.core.Either
+import arrow.core.left
+import arrow.core.right
+import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.toKotlinLocalDateTime
 import kotlinx.serialization.json.Json
@@ -10,12 +14,14 @@ import no.nav.fia.dokument.publisering.kafka.dto.SpørreundersøkelseInnholdIDok
 import org.slf4j.LoggerFactory
 import java.time.LocalDateTime.now
 import java.util.UUID
+import kotlin.jvm.java
 
 class DokumentService(
     val dokumentRepository: DokumentRepository,
     val journalpostService: JournalpostService,
 ) {
     private val log = LoggerFactory.getLogger(this::class.java)
+
     private val json = Json {
         ignoreUnknownKeys = true
     }
@@ -66,10 +72,10 @@ class DokumentService(
         }
     }
 
-    fun hentDokumenter(
-        orgnr: String,
-        status: Dokument.Status,
-    ): List<Dokument> = dokumentRepository.hentDokumenter(orgnr = orgnr, status = status)
+    fun hentPubliserteDokumenter(orgnr: String): List<Dokument> = dokumentRepository.hentPubliserteDokumenter(orgnr = orgnr)
+
+    fun hentEtPublisertDokument(dokumentId: UUID): Either<Feil, Dokument> =
+        dokumentRepository.hentEtPublisertDokument(dokumentId = dokumentId)?.right() ?: DokumentFeil.`fant ikke dokument`.left()
 }
 
 fun DokumentKafkaDto.tilDomene(): Dokument =
@@ -95,7 +101,27 @@ fun List<Dokument>.tilDto() = this.map { it.tilDto() }
 fun Dokument.tilDto(): DokumentDto =
     DokumentDto(
         dokumentId = dokumentId.toString(),
-        type = type.name,
-        samarbeidNavn = samarbeidNavn,
         innhold = innhold,
     )
+
+fun String.tilUUID(hvaErJeg: String): UUID =
+    try {
+        UUID.fromString(this)
+    } catch (e: Exception) {
+        throw IllegalArgumentException(
+            "Kunne ikke konvertere '$this' til UUID for $hvaErJeg",
+            e,
+        )
+    }
+
+class Feil(
+    val feilmelding: String,
+    val httpStatusCode: HttpStatusCode,
+)
+
+object DokumentFeil {
+    val `fant ikke dokument` = Feil(
+        feilmelding = "Fant ikke dokument",
+        httpStatusCode = HttpStatusCode.NotFound,
+    )
+}
