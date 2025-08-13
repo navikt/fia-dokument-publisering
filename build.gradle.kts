@@ -20,8 +20,8 @@ val testcontainersVersion = "1.21.0"
 
 dependencies {
     // -- ktor
-    implementation("io.ktor:ktor-server-auth-jvm:${ktorVersion}")
-    implementation("io.ktor:ktor-server-auth-jwt-jvm:${ktorVersion}")
+    implementation("io.ktor:ktor-server-auth-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-server-auth-jwt-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-core-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
@@ -45,7 +45,10 @@ dependencies {
     implementation("org.apache.kafka:kafka-clients:3.9.0")
 
     // Logg requests (kan sløyfes i vanlig drift)
-    implementation("io.ktor:ktor-server-call-logging:${ktorVersion}")
+    implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
+
+    // Funksjonelle operatorer
+    implementation("io.arrow-kt:arrow-core:2.1.2")
 
     // ----------- test
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
@@ -59,7 +62,6 @@ dependencies {
     testImplementation("com.nimbusds:nimbus-jose-jwt:10.3.1")
     // -- validere pdfa
     testImplementation("org.verapdf:validation-model:1.28.2")
-
 
     constraints {
         testImplementation("org.apache.commons:commons-compress") {

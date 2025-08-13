@@ -2,6 +2,7 @@ package no.nav.fia.dokument.publisering.db
 
 import kotlinx.datetime.toJavaLocalDateTime
 import kotlinx.datetime.toKotlinLocalDateTime
+import kotliquery.Row
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
@@ -63,10 +64,7 @@ class DokumentRepository(
             )
         }
 
-    fun hentDokumenter(
-        orgnr: String,
-        status: Dokument.Status,
-    ): List<Dokument> =
+    fun hentPubliserteDokumenter(orgnr: String): List<Dokument> =
         using(sessionOf(dataSource)) { session ->
             session.run(
                 action = queryOf(
@@ -78,26 +76,49 @@ class DokumentRepository(
                         """.trimIndent(),
                     paramMap = mapOf(
                         "orgnr" to orgnr,
-                        "status" to status.name,
+                        "status" to Dokument.Status.PUBLISERT.name,
                     ),
                 ).map { row ->
-                    Dokument(
-                        dokumentId = UUID.fromString(row.string("dokument_id")),
-                        referanseId = UUID.fromString(row.string("referanse_id")),
-                        type = Dokument.Type.valueOf(row.string("type")),
-                        opprettetAv = row.string("opprettet_av"),
-                        status = Dokument.Status.valueOf(row.string("status")),
-                        orgnr = row.string("orgnr"),
-                        saksnummer = row.string("saksnummer"),
-                        samarbeidId = row.int("samarbeid_id"),
-                        samarbeidNavn = row.string("samarbeid_navn"),
-                        innhold = row.string("innhold"),
-                        sendtTilPublisering = row.localDateTime("sendt_til_publisering").toKotlinLocalDateTime(),
-                        opprettet = row.localDateTime("opprettet").toKotlinLocalDateTime(),
-                        publisert = row.localDateTimeOrNull("publisert")?.toKotlinLocalDateTime(),
-                        sistEndret = row.localDateTimeOrNull("sist_endret")?.toKotlinLocalDateTime(),
-                    )
+                    row.tilDokument()
                 }.asList,
             )
         }
+
+    fun hentEtPublisertDokument(dokumentId: UUID): Dokument? =
+        using(sessionOf(dataSource)) { session ->
+            session.run(
+                action = queryOf(
+                    statement =
+                        """
+                        SELECT *
+                        FROM dokument
+                        WHERE dokument_id = :dokumentId AND status = :status
+                        """.trimIndent(),
+                    paramMap = mapOf(
+                        "dokumentId" to dokumentId.toString(),
+                        "status" to Dokument.Status.PUBLISERT.name,
+                    ),
+                ).map { row ->
+                    row.tilDokument()
+                }.asSingle,
+            )
+        }
+
+    private fun Row.tilDokument(): Dokument =
+        Dokument(
+            dokumentId = UUID.fromString(this.string("dokument_id")),
+            referanseId = UUID.fromString(this.string("referanse_id")),
+            type = Dokument.Type.valueOf(this.string("type")),
+            opprettetAv = this.string("opprettet_av"),
+            status = Dokument.Status.valueOf(this.string("status")),
+            orgnr = this.string("orgnr"),
+            saksnummer = this.string("saksnummer"),
+            samarbeidId = this.int("samarbeid_id"),
+            samarbeidNavn = this.string("samarbeid_navn"),
+            innhold = this.string("innhold"),
+            sendtTilPublisering = this.localDateTime("sendt_til_publisering").toKotlinLocalDateTime(),
+            opprettet = this.localDateTime("opprettet").toKotlinLocalDateTime(),
+            publisert = this.localDateTimeOrNull("publisert")?.toKotlinLocalDateTime(),
+            sistEndret = this.localDateTimeOrNull("sist_endret")?.toKotlinLocalDateTime(),
+        )
 }
