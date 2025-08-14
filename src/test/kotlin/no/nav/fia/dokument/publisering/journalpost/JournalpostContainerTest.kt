@@ -4,7 +4,6 @@ import io.kotest.matchers.shouldBe
 import kotlinx.serialization.json.Json
 import no.nav.fia.dokument.publisering.helper.TestContainerHelper.Companion.dokarkivContainer
 import no.nav.fia.dokument.publisering.helper.TestContainerHelper.Companion.kafkaContainer
-import no.nav.fia.dokument.publisering.helper.TestContainerHelper.Companion.lagEntraIdToken
 import no.nav.fia.dokument.publisering.helper.TestContainerHelper.Companion.postgresContainer
 import no.nav.fia.dokument.publisering.helper.TestContainerHelper.Companion.texasSidecarContainer
 import java.util.UUID
@@ -20,8 +19,7 @@ class JournalpostContainerTest {
 
     @Test
     fun `kaller dokarkiv for å arkivere et dokument`() {
-        val entraIdToken = lagEntraIdToken()
-        texasSidecarContainer.stubNaisTokenEndepunkt(entraIdToken)
+        texasSidecarContainer.stubNaisTokenEndepunkt()
         val dokumentKafkaDto = kafkaContainer.etVilkårligDokumentTilPublisering()
         val orgnr = dokumentKafkaDto.virksomhet.orgnummer
         val virksomhetsnavn = dokumentKafkaDto.virksomhet.navn

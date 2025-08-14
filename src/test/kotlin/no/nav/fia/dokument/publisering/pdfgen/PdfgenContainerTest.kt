@@ -63,22 +63,22 @@ class PdfgenContainerTest {
                                                 "Bra",
                                                 "Nøytral",
                                                 "Dårlig",
-                                                "Veldig dårlig"
+                                                "Veldig dårlig",
                                             ).map { svar ->
                                                 SvarResultatDto(
                                                     id = "${UUID.randomUUID()}",
                                                     tekst = svar,
-                                                    antallSvar = 2
+                                                    antallSvar = 2,
                                                 )
                                             },
-                                            kategori = "Generelt"
-                                        )
+                                            kategori = "Generelt",
+                                        ),
                                     ),
                                 ),
-                            )
-                        )
-                    )
-                )
+                            ),
+                        ),
+                    ),
+                ),
             )
             val pdfaFlavour = PDFAFlavour.PDFA_2_U
             val validator = Foundries.defaultInstance().createValidator(pdfaFlavour, false)

@@ -4,7 +4,6 @@ import kotlinx.serialization.json.Json
 import no.nav.fia.dokument.publisering.domene.Dokument
 import no.nav.fia.dokument.publisering.helper.TestContainerHelper.Companion.dokarkivContainer
 import no.nav.fia.dokument.publisering.helper.TestContainerHelper.Companion.kafkaContainer
-import no.nav.fia.dokument.publisering.helper.TestContainerHelper.Companion.lagEntraIdToken
 import no.nav.fia.dokument.publisering.helper.TestContainerHelper.Companion.postgresContainer
 import no.nav.fia.dokument.publisering.helper.TestContainerHelper.Companion.texasSidecarContainer
 import no.nav.fia.dokument.publisering.kafka.dto.SpørreundersøkelseInnholdIDokumentDto
@@ -16,7 +15,7 @@ class DokumentTest {
     @BeforeTest
     fun setup() {
         texasSidecarContainer.slettAlleStubs()
-        texasSidecarContainer.stubNaisTokenEndepunkt(lagEntraIdToken())
+        texasSidecarContainer.stubNaisTokenEndepunkt()
         dokarkivContainer.slettAlleJournalposter()
     }
 

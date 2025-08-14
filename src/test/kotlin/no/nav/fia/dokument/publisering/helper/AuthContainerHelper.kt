@@ -4,6 +4,7 @@ import com.nimbusds.jose.JOSEObjectType
 import com.nimbusds.jwt.SignedJWT
 import com.nimbusds.oauth2.sdk.AuthorizationCode
 import com.nimbusds.oauth2.sdk.AuthorizationCodeGrant
+import com.nimbusds.oauth2.sdk.Scope
 import com.nimbusds.oauth2.sdk.TokenRequest
 import com.nimbusds.oauth2.sdk.auth.ClientSecretBasic
 import com.nimbusds.oauth2.sdk.auth.Secret
@@ -72,6 +73,7 @@ class AuthContainerHelper(
             URI.create(baseEndpointUrl),
             ClientSecretBasic(ClientID(issuerId), Secret("secret")),
             AuthorizationCodeGrant(AuthorizationCode(FNR), URI.create("http://localhost")),
+            Scope(audience),
         )
         return config.tokenProvider.accessToken(tokenRequest, issuerUrl.toHttpUrl(), tokenCallback, null)
     }

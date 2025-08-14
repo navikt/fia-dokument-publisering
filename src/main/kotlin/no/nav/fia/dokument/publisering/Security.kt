@@ -10,7 +10,6 @@ import io.ktor.server.auth.jwt.jwt
 import java.net.URI
 import java.util.concurrent.TimeUnit
 
-
 fun Application.configureSecurity(tokenxValidering: TokenxValidering) {
     val tokenxJwkProvider = JwkProviderBuilder(URI(tokenxValidering.tokenxJwksUri).toURL())
         .cached(10, 24, TimeUnit.HOURS)

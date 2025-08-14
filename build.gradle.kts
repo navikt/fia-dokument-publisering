@@ -25,7 +25,7 @@ dependencies {
     implementation("io.ktor:ktor-server-auth-jwt-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-core-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")
-    implementation("io.ktor:ktor-client-auth:${ktorVersion}")
+    implementation("io.ktor:ktor-client-auth:$ktorVersion")
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-client-core:$ktorVersion")
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktorVersion")
@@ -64,8 +64,8 @@ dependencies {
     // Mock-oauth2-server
     testImplementation("no.nav.security:mock-oauth2-server:2.2.1")
     // Mockserver neolight
-    testImplementation("software.xdev.mockserver:testcontainers:${mockServerVersion}")
-    testImplementation("software.xdev.mockserver:client:${mockServerVersion}")
+    testImplementation("software.xdev.mockserver:testcontainers:$mockServerVersion")
+    testImplementation("software.xdev.mockserver:client:$mockServerVersion")
     // JWT utilities
     testImplementation("com.nimbusds:nimbus-jose-jwt:10.3.1")
     // -- validere pdfa

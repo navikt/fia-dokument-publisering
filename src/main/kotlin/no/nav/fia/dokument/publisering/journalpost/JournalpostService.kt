@@ -1,10 +1,6 @@
 package no.nav.fia.dokument.publisering.journalpost
 
-import arrow.core.Either
-import arrow.core.flatMap
 import arrow.core.getOrElse
-import arrow.core.left
-import arrow.core.right
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.auth.Auth
@@ -21,7 +17,6 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import kotlinx.datetime.LocalDateTime
-import no.nav.fia.dokument.publisering.Feil
 import no.nav.fia.dokument.publisering.NaisEnvironment
 import no.nav.fia.dokument.publisering.auth.EntraIdTokenAuthClient
 import no.nav.fia.dokument.publisering.domene.Dokument
@@ -41,15 +36,15 @@ class JournalpostService(
     private val entraIdTokenAuthClient: EntraIdTokenAuthClient,
 ) {
     private val log = LoggerFactory.getLogger(this::class.java)
-    private val journalPostUrl = NaisEnvironment.Companion.journalpostUrl
-    private val journalPostScope = NaisEnvironment.Companion.journalpostScope
+    private val journalPostUrl = NaisEnvironment.journalpostUrl
+    private val journalPostScope = NaisEnvironment.journalpostScope
 
     suspend fun journalfør(
         lagretDokument: Dokument,
         dokumentKafkaDto: DokumentKafkaDto,
         journalføringDato: LocalDateTime,
-    ): Either<Feil, JournalpostResultatDto> {
-        val pdf = pdfgenService.genererBase64DokumentPdf(
+    ): JournalpostResultatDto {
+        val base64EnkodetPdf = pdfgenService.genererBase64DokumentPdf(
             spørreundersøkelsePdfDokumentDto = PdfDokumentDto(
                 publiseringsdato = journalføringDato,
                 sak = dokumentKafkaDto.sak,
@@ -66,24 +61,21 @@ class JournalpostService(
             ),
         )
 
-        return pdf.flatMap { base64EnkodetPdf ->
-            val journalpostDto = lagJournalpostDto(
-                dokumentId = lagretDokument.dokumentId,
-                virksomhetDto = dokumentKafkaDto.virksomhet,
-                sakDto = dokumentKafkaDto.sak,
-                journalpostTittel = "Behovsvurdering",
-                dokumentTittel = "Behovsvurdering",
-                pdf = base64EnkodetPdf,
-            )
-            journalfør(
-                journalpostDto = journalpostDto,
-            )
-        }
+        val journalpostDto = lagJournalpostDto(
+            dokumentId = lagretDokument.dokumentId,
+            virksomhetDto = dokumentKafkaDto.virksomhet,
+            sakDto = dokumentKafkaDto.sak,
+            journalpostTittel = "Behovsvurdering",
+            dokumentTittel = "Behovsvurdering",
+            pdf = base64EnkodetPdf,
+        )
+        return journalfør(
+            journalpostDto = journalpostDto,
+        )
     }
 
-
-    private fun getAuthorizedHttpClient(scopeForAuthorization: String): HttpClient {
-        return client.config {
+    private fun getAuthorizedHttpClient(scopeForAuthorization: String): HttpClient =
+        client.config {
             install(Auth) {
                 bearer {
                     loadTokens {
@@ -101,7 +93,6 @@ class JournalpostService(
                 }
             }
         }
-    }
 
     private fun lagJournalpostDto(
         dokumentId: UUID,
@@ -148,11 +139,7 @@ class JournalpostService(
         return journalpostDto
     }
 
-    // TODO ikke returner Feil(feilmelding, httpStatusCode) da vi ikke er i kontekst av en http-request
-    private suspend fun journalfør(
-        journalpostDto: JournalpostDto,
-    ): Either<Feil, JournalpostResultatDto> {
-
+    private suspend fun journalfør(journalpostDto: JournalpostDto): JournalpostResultatDto {
         val httpClient = getAuthorizedHttpClient(scopeForAuthorization = journalPostScope)
         val response: HttpResponse = httpClient.post {
             url(urlString = journalPostUrl)
@@ -163,27 +150,22 @@ class JournalpostService(
         }
         log.info(
             "Forsøk å journalføre et dokument med fagsakId ${journalpostDto.sak.fagsakId}, " +
-                "på url ${response.request.url} ga status ${response.status}."
+                "på url ${response.request.url} ga status ${response.status}.",
         )
 
         return response.status.let { status ->
             when (status) {
                 HttpStatusCode.OK -> {
-                    response.body<JournalpostResultatDto>().right()
+                    response.body<JournalpostResultatDto>()
                 }
 
                 else -> {
-                    log.error("Feil ved journalføring av dokument med fagsakId ${journalpostDto.sak.fagsakId}, fikk følgende status i response: ${response.status}")
-                    JournalpostFeil.FeilendeJournalpost.left()
+                    log.warn(
+                        "Feil ved journalføring av dokument med fagsakId ${journalpostDto.sak.fagsakId}, fikk følgende status i response: ${response.status}",
+                    )
+                    throw RuntimeException("Feil ved journalføring av dokument med fagsakId")
                 }
             }
         }
-    }
-
-    object JournalpostFeil {
-        val FeilendeJournalpost = Feil(
-            feilmelding = "Klarte ikke å journalføre",
-            httpStatusCode = HttpStatusCode.InternalServerError,
-        )
     }
 }

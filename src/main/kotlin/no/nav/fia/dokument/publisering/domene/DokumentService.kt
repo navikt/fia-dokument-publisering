@@ -42,33 +42,34 @@ class DokumentService(
         dokumentRepository.lagreDokument(dokument = dokument)
 
         runBlocking {
-            val journalføringDato = now().toKotlinLocalDateTime()
+            try {
+                val journalføringDato = now().toKotlinLocalDateTime()
 
-            journalpostService.journalfør(
-                lagretDokument = dokument,
-                dokumentKafkaDto = dokumentKafkaDto,
-                journalføringDato = journalføringDato,
-            )
-                .onLeft { feil ->
-                    log.warn(
-                        "Feil under journalføring av dokument med referanseId: '${dokumentKafkaDto.referanseId}'",
-                        feil
-                    )
-                    dokumentRepository.oppdaterDokument(
-                        dokumentId = dokument.dokumentId,
-                        status = Dokument.Status.FEILET_JOURNALFØRING,
-                    )
-                }
-                .onRight { journalpostResultat ->
-                    log.info("Dokument med referanseId: '${dokumentKafkaDto.referanseId}' er journalført " +
-                        "med journalpostId: ${journalpostResultat.journalpostId}")
-                    dokumentRepository.oppdaterDokument(
-                        dokumentId = dokument.dokumentId,
-                        status = Dokument.Status.PUBLISERT,
-                        journalpostId = journalpostResultat.journalpostId,
-                        publisertDato = journalføringDato
-                    )
-                }
+                val journalpostResultat = journalpostService.journalfør(
+                    lagretDokument = dokument,
+                    dokumentKafkaDto = dokumentKafkaDto,
+                    journalføringDato = journalføringDato,
+                )
+                log.info(
+                    "Dokument med referanseId: '${dokumentKafkaDto.referanseId}' er journalført " +
+                        "med journalpostId: ${journalpostResultat.journalpostId}",
+                )
+                dokumentRepository.oppdaterDokument(
+                    dokumentId = dokument.dokumentId,
+                    status = Dokument.Status.PUBLISERT,
+                    journalpostId = journalpostResultat.journalpostId,
+                    publisertDato = journalføringDato,
+                )
+            } catch (e: Exception) {
+                log.warn(
+                    "Feil under journalføring av dokument med referanseId: '${dokumentKafkaDto.referanseId}'",
+                    e,
+                )
+                dokumentRepository.oppdaterDokument(
+                    dokumentId = dokument.dokumentId,
+                    status = Dokument.Status.FEILET_JOURNALFØRING,
+                )
+            }
         }
     }
 

@@ -102,7 +102,7 @@ class TexasSidecarContainerHelper(
         }
     }
 
-    internal fun stubNaisTokenEndepunkt(accessToken: String) {
+    internal fun stubNaisTokenEndepunkt() {
         logger.info(
             "Lager stub for endepunkt /api/v1/token for uthenting av token fra Texas sidecar",
         )
@@ -127,7 +127,7 @@ class TexasSidecarContainerHelper(
                 response().withBody(
                     """
                     {
-                        "access_token": "$accessToken",
+                        "access_token": "eY..",
                         "expires_in": 3599,
                         "token_type": "Bearer"
                     }

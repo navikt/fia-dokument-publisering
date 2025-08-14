@@ -92,8 +92,6 @@ class TestContainerHelper {
                 )
             }
 
-        internal fun lagEntraIdToken(): String = entraIdAccessToken().serialize()
-
         val ikkeGyldigJwtToken =
             "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30"
 
@@ -111,13 +109,6 @@ class TestContainerHelper {
             audience = audience,
             claims = claims,
             issuerId = "tokenx",
-        )
-
-        // OBS: denne genererer et fake Entra ID access token som kan brukes for testing
-        private fun entraIdAccessToken() = authContainerHelper.issueToken(
-            audience = "teamdokumenthandtering.dokarkiv",
-            claims = emptyMap(),
-            issuerId = "azuread", // Azure-ad er issuer ID for Entra ID tokens
         )
     }
 }

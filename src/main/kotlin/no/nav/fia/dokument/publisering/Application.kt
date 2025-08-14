@@ -32,7 +32,7 @@ fun main() {
     val dataSource = createDataSource(database = NaisEnvironment().database)
     runMigration(dataSource = dataSource)
 
-    val entraIdTokenAuthClient = EntraIdTokenAuthClient(tokenEndpoint = NaisEnvironment.Companion.tokenEndpoint)
+    val entraIdTokenAuthClient = EntraIdTokenAuthClient(tokenEndpoint = NaisEnvironment.tokenEndpoint)
     val pdfgenService = PiaPdfgenService()
     val journalpostService = JournalpostService(
         pdfgenService = pdfgenService,
@@ -52,7 +52,7 @@ fun main() {
             module = {
                 fiaDokumentPubliseringApi(
                     applikasjonsHelse = applikasjonsHelse,
-                    dokumentService = dokumentService
+                    dokumentService = dokumentService,
                 )
             },
         )
@@ -105,7 +105,6 @@ private fun settOppKonsumenter(
     applikasjonsHelse: ApplikasjonsHelse,
     dokumentService: DokumentService,
 ) {
-
     val dokumentKonsument = KafkaKonsument(
         kafkaConfig = KafkaConfig(),
         kafkaTopic = KafkaTopics.DOKUMENT_PUBLISERING,
