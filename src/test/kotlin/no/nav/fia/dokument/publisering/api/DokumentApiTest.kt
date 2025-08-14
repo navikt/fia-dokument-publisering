@@ -1,3 +1,5 @@
+package no.nav.fia.dokument.publisering.api
+
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
@@ -6,16 +8,8 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
-import no.nav.fia.dokument.publisering.api.DokumentDto
 import no.nav.fia.dokument.publisering.domene.Dokument
-import no.nav.fia.dokument.publisering.helper.TestContainerHelper.Companion.dokarkivContainer
-import no.nav.fia.dokument.publisering.helper.TestContainerHelper.Companion.hentAllePubliserteDokumenter
-import no.nav.fia.dokument.publisering.helper.TestContainerHelper.Companion.hentEtPublisertDokument
-import no.nav.fia.dokument.publisering.helper.TestContainerHelper.Companion.kafkaContainer
-import no.nav.fia.dokument.publisering.helper.TestContainerHelper.Companion.postgresContainer
-import no.nav.fia.dokument.publisering.helper.TestContainerHelper.Companion.texasSidecarContainer
-import no.nav.fia.dokument.publisering.helper.TestContainerHelper.Companion.withTokenXToken
-import no.nav.fia.dokument.publisering.helper.TestContainerHelper.Companion.withoutGyldigTokenXToken
+import no.nav.fia.dokument.publisering.helper.TestContainerHelper
 import no.nav.fia.dokument.publisering.journalpost.AvsenderMottaker
 import no.nav.fia.dokument.publisering.journalpost.Bruker
 import no.nav.fia.dokument.publisering.journalpost.DokumentVariant
@@ -30,6 +24,7 @@ import no.nav.fia.dokument.publisering.journalpost.Kanal
 import no.nav.fia.dokument.publisering.journalpost.Sak
 import no.nav.fia.dokument.publisering.journalpost.Sakstype
 import no.nav.fia.dokument.publisering.journalpost.Variantformat
+import tilUUID
 import java.util.UUID
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -37,16 +32,16 @@ import kotlin.test.Test
 class DokumentApiTest {
     @BeforeTest
     internal fun setup() {
-        texasSidecarContainer.slettAlleStubs()
-        dokarkivContainer.slettAlleJournalposter()
+        TestContainerHelper.texasSidecarContainer.slettAlleStubs()
+        TestContainerHelper.dokarkivContainer.slettAlleJournalposter()
     }
 
     @Test
     fun `Uinnlogget bruker får en 401 - Not Authorized i response`() {
         runBlocking {
-            val response = hentAllePubliserteDokumenter(
+            val response = TestContainerHelper.hentAllePubliserteDokumenter(
                 orgnr = "123456789",
-                config = withoutGyldigTokenXToken(),
+                config = TestContainerHelper.withoutGyldigTokenXToken(),
             )
             response.status.value shouldBe 401
         }
@@ -54,14 +49,14 @@ class DokumentApiTest {
 
     @Test
     fun `skal hente alle publiserte dokumenter for en virksomhet`() {
-        texasSidecarContainer.stubNaisTokenEndepunkt()
-        val dokumentKafkaDto = kafkaContainer.etVilkårligDokumentTilPublisering(orgnr = "111111111")
+        TestContainerHelper.texasSidecarContainer.stubNaisTokenEndepunkt()
+        val dokumentKafkaDto = TestContainerHelper.kafkaContainer.etVilkårligDokumentTilPublisering(orgnr = "111111111")
         val nøkkel = "${dokumentKafkaDto.samarbeid.id}-${dokumentKafkaDto.referanseId}-${dokumentKafkaDto.type.name}"
         val orgnr = dokumentKafkaDto.virksomhet.orgnummer
         val virksomhetsnavn = dokumentKafkaDto.virksomhet.navn
         val navenhet = dokumentKafkaDto.sak.navenhet
 
-        dokarkivContainer.leggTilJournalPost(
+        TestContainerHelper.dokarkivContainer.leggTilJournalPost(
             JournalpostDto(
                 tittel = "Behovsvurdering",
                 tema = JournalpostTema.IAR,
@@ -98,15 +93,15 @@ class DokumentApiTest {
             ),
         )
 
-        kafkaContainer.sendMeldingPåKafka(
+        TestContainerHelper.kafkaContainer.sendMeldingPåKafka(
             nøkkel = nøkkel,
-            melding = Json.encodeToString(dokumentKafkaDto),
+            melding = Json.Default.encodeToString(dokumentKafkaDto),
         )
 
         runBlocking {
-            val response = hentAllePubliserteDokumenter(
+            val response = TestContainerHelper.hentAllePubliserteDokumenter(
                 orgnr = dokumentKafkaDto.virksomhet.orgnummer,
-                config = withTokenXToken(
+                config = TestContainerHelper.withTokenXToken(
                     claims = mapOf(
                         "acr" to "Level4",
                         "pid" to "123",
@@ -114,20 +109,20 @@ class DokumentApiTest {
                 ),
             )
             response.status.value shouldBe 200
-            val oppfrisketListeAvDokumenter = Json.decodeFromString<List<DokumentDto>>(response.bodyAsText())
+            val oppfrisketListeAvDokumenter = Json.Default.decodeFromString<List<DokumentDto>>(response.bodyAsText())
             oppfrisketListeAvDokumenter shouldHaveSize 1
         }
     }
 
     @Test
     fun `skal returnere et publisert dokument med innhold`() {
-        val dokumentKafkaDto = kafkaContainer.etVilkårligDokumentTilPublisering()
+        val dokumentKafkaDto = TestContainerHelper.kafkaContainer.etVilkårligDokumentTilPublisering()
         val nøkkel = "${dokumentKafkaDto.samarbeid.id}-${dokumentKafkaDto.referanseId}-${dokumentKafkaDto.type.name}"
         val orgnr = dokumentKafkaDto.virksomhet.orgnummer
         val virksomhetsnavn = dokumentKafkaDto.virksomhet.navn
         val navenhet = dokumentKafkaDto.sak.navenhet
 
-        dokarkivContainer.leggTilJournalPost(
+        TestContainerHelper.dokarkivContainer.leggTilJournalPost(
             JournalpostDto(
                 tittel = "Behovsvurdering",
                 tema = JournalpostTema.IAR,
@@ -164,12 +159,12 @@ class DokumentApiTest {
             ),
         )
 
-        kafkaContainer.sendMeldingPåKafka(
+        TestContainerHelper.kafkaContainer.sendMeldingPåKafka(
             nøkkel = nøkkel,
-            melding = Json.encodeToString(dokumentKafkaDto),
+            melding = Json.Default.encodeToString(dokumentKafkaDto),
         )
 
-        val dokumentId = postgresContainer.hentEnkelKolonne<String>(
+        val dokumentId = TestContainerHelper.postgresContainer.hentEnkelKolonne<String>(
             """
             SELECT dokument_id 
             FROM dokument 
@@ -178,7 +173,7 @@ class DokumentApiTest {
         )
 
         runBlocking {
-            postgresContainer.performUpdate(
+            TestContainerHelper.postgresContainer.performUpdate(
                 """
                 UPDATE dokument
                 SET status = '${Dokument.Status.PUBLISERT}'
@@ -187,9 +182,9 @@ class DokumentApiTest {
                 """.trimIndent(),
             )
 
-            val response = hentEtPublisertDokument(
+            val response = TestContainerHelper.hentEtPublisertDokument(
                 dokumentId = dokumentId.tilUUID("dokumentId"),
-                config = withTokenXToken(
+                config = TestContainerHelper.withTokenXToken(
                     claims = mapOf(
                         "acr" to "Level4",
                         "pid" to "123",
@@ -208,15 +203,15 @@ class DokumentApiTest {
 
     @Test
     fun `skal IKKE kunne hente et dokument som ikke er publisert`() {
-        val dokumentKafkaDto = kafkaContainer.etVilkårligDokumentTilPublisering()
+        val dokumentKafkaDto = TestContainerHelper.kafkaContainer.etVilkårligDokumentTilPublisering()
         val nøkkel = "${dokumentKafkaDto.samarbeid.id}-${dokumentKafkaDto.referanseId}-${dokumentKafkaDto.type.name}"
 
-        kafkaContainer.sendMeldingPåKafka(
+        TestContainerHelper.kafkaContainer.sendMeldingPåKafka(
             nøkkel = nøkkel,
-            melding = Json.encodeToString(dokumentKafkaDto),
+            melding = Json.Default.encodeToString(dokumentKafkaDto),
         )
 
-        val dokumentId = postgresContainer.hentEnkelKolonne<String>(
+        val dokumentId = TestContainerHelper.postgresContainer.hentEnkelKolonne<String>(
             """
             SELECT dokument_id 
             FROM dokument 
@@ -225,9 +220,9 @@ class DokumentApiTest {
         )
 
         runBlocking {
-            hentEtPublisertDokument(
+            TestContainerHelper.hentEtPublisertDokument(
                 dokumentId = dokumentId.tilUUID("dokumentId"),
-                config = withTokenXToken(
+                config = TestContainerHelper.withTokenXToken(
                     claims = mapOf(
                         "acr" to "Level4",
                         "pid" to "123",
