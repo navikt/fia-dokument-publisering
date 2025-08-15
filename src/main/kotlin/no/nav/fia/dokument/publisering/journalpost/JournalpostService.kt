@@ -155,7 +155,7 @@ class JournalpostService(
 
         return response.status.let { status ->
             when (status) {
-                HttpStatusCode.OK -> {
+                HttpStatusCode.OK, HttpStatusCode.Created -> {
                     response.body<JournalpostResultatDto>()
                 }
 
