@@ -24,7 +24,13 @@ data class VirksomhetDto(
 @Serializable
 data class SakDto(
     val saksnummer: String,
-    val navenhet: String,
+    val navenhet: NavEnhet,
+)
+
+@Serializable
+data class NavEnhet(
+    val enhetsnummer: String,
+    val enhetsnavn: String,
 )
 
 @Serializable

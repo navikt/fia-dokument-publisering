@@ -9,7 +9,7 @@ import no.nav.fia.dokument.publisering.kafka.dto.VirksomhetDto
 
 @Serializable
 data class PdfDokumentDto(
-    val publiseringsdato: String,
+    val publiseringsdato: LocalDateTime,
     val sak: SakDto,
     val virksomhet: VirksomhetDto,
     val samarbeid: SamarbeidDto,

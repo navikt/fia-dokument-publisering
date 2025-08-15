@@ -15,7 +15,7 @@ class KafkaKonsument(
     kafkaConfig: KafkaConfig,
     private val kafkaTopic: KafkaTopics,
     private val applikasjonsHelse: ApplikasjonsHelse,
-    private val block: (String) -> Unit,
+    private val prosessFunksjon: (melding: String) -> Unit,
 ) {
     private val log = LoggerFactory.getLogger(this::class.java)
     private val konsument = KafkaConsumer(
@@ -48,8 +48,8 @@ class KafkaKonsument(
                 .map { melding ->
                     log.info("Mottok kafkamelding med nøkkel: ${melding.key()}")
                     melding.value()
-                }.forEach { dokument ->
-                    block(dokument)
+                }.forEach { value ->
+                    prosessFunksjon(value)
                 }
             konsument.commitSync()
         }

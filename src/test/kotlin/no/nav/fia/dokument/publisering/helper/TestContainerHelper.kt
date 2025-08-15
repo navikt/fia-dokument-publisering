@@ -24,6 +24,8 @@ class TestContainerHelper {
         val postgresContainer = PostgresContainer(network = network)
         val kafkaContainer = KafkaContainer(network = network)
         val pdfgenContainer = PdfgenContainerHelper(network = network, log = log)
+        val dokarkivContainer = DokarkivContainerHelper(network = network)
+        val texasSidecarContainer = TexasSidecarContainerHelper(network = network)
 
         val fiaDokumentPubliseringContainer =
             GenericContainer(
@@ -34,6 +36,8 @@ class TestContainerHelper {
                     postgresContainer.container,
                     kafkaContainer.container,
                     pdfgenContainer.container,
+                    dokarkivContainer.container,
+                    texasSidecarContainer.container,
                 )
                 .withNetwork(network)
                 .withExposedPorts(8080)
@@ -52,6 +56,10 @@ class TestContainerHelper {
                         kafkaContainer.getEnv(),
                     ).plus(
                         pdfgenContainer.envVars(),
+                    ).plus(
+                        dokarkivContainer.envVars(),
+                    ).plus(
+                        texasSidecarContainer.envVars(),
                     ),
                 )
                 .apply {

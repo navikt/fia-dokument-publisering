@@ -7,6 +7,7 @@ import kotlinx.datetime.toKotlinLocalDateTime
 import no.nav.fia.dokument.publisering.domene.Dokument
 import no.nav.fia.dokument.publisering.kafka.KafkaTopics
 import no.nav.fia.dokument.publisering.kafka.dto.DokumentKafkaDto
+import no.nav.fia.dokument.publisering.kafka.dto.NavEnhet
 import no.nav.fia.dokument.publisering.kafka.dto.SakDto
 import no.nav.fia.dokument.publisering.kafka.dto.SamarbeidDto
 import no.nav.fia.dokument.publisering.kafka.dto.SpørreundersøkelseInnholdIDokumentDto
@@ -124,7 +125,7 @@ class KafkaContainer(
             StringSerializer(),
         )
 
-    fun etDokumentTilPublisering(
+    fun etVilkårligDokumentTilPublisering(
         referanseId: UUID = UUID.randomUUID(),
         type: Dokument.Type = Dokument.Type.BEHOVSVURDERING,
         orgnr: String = "987654321",
@@ -133,7 +134,10 @@ class KafkaContainer(
         return DokumentKafkaDto(
             sak = SakDto(
                 saksnummer = "01HPGQR1626B531V7BXEQK172M",
-                navenhet = "NAV Enhet",
+                navenhet = NavEnhet(
+                    enhetsnummer = "1234",
+                    enhetsnavn = "Nav Enhet 1",
+                ),
             ),
             virksomhet = VirksomhetDto(
                 orgnummer = orgnr,

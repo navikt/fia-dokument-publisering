@@ -16,26 +16,24 @@ import no.nav.fia.dokument.publisering.NaisEnvironment
 import no.nav.fia.dokument.publisering.http.HttpClient.client
 import java.util.Base64
 
-class PiaPdfgenService() {
-    val piaPdfgenUrl = NaisEnvironment.Companion.piaPdfgenUrl
+class PiaPdfgenService {
+    val piaPdfgenUrl = NaisEnvironment.piaPdfgenUrl
 
-    private fun getHttpClient(): HttpClient {
-        return client.config {}
-    }
-    suspend fun genererBase64DokumentPdf(spørreundersøkelsePdfDokumentDto: PdfDokumentDto) =
-        when (NaisEnvironment.Companion.cluster) {
+    private fun getHttpClient(): HttpClient = client.config {}
+
+    suspend fun genererBase64DokumentPdf(spørreundersøkelsePdfDokumentDto: PdfDokumentDto): String =
+        when (NaisEnvironment.cluster) {
             Cluster.`prod-gcp`, Cluster.`dev-gcp` -> genererPdfDokument(
                 pdfType = PdfType.BEHOVSVURDERING,
                 json = Json.encodeToString<PdfDokumentDto>(spørreundersøkelsePdfDokumentDto),
-            )?.tilBase64()
+            ).tilBase64()
             else -> ""
         }
-
 
     private suspend fun genererPdfDokument(
         pdfType: PdfType,
         json: String,
-    ): ByteArray? {
+    ): ByteArray {
         val httpClient = getHttpClient()
         val response: HttpResponse = httpClient.post {
             url("$piaPdfgenUrl/api/v1/genpdf/pia/${pdfType.type}")
@@ -46,7 +44,7 @@ class PiaPdfgenService() {
 
         return when (response.status) {
             HttpStatusCode.OK -> response.readRawBytes()
-            else -> null
+            else -> throw RuntimeException("Klarte ikke å generere Pdf. Status: ${response.status}")
         }
     }
 

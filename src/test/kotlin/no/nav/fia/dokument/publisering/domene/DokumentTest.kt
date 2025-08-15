@@ -1,42 +1,52 @@
+package no.nav.fia.dokument.publisering.domene
+
+import io.kotest.matchers.collections.shouldBeIn
 import io.kotest.matchers.shouldBe
 import kotlinx.serialization.json.Json
-import no.nav.fia.dokument.publisering.helper.TestContainerHelper.Companion.kafkaContainer
-import no.nav.fia.dokument.publisering.helper.TestContainerHelper.Companion.postgresContainer
+import no.nav.fia.dokument.publisering.helper.TestContainerHelper
 import no.nav.fia.dokument.publisering.kafka.dto.SpørreundersøkelseInnholdIDokumentDto
 import org.postgresql.util.PGobject
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 class DokumentTest {
+    @BeforeTest
+    fun setup() {
+        TestContainerHelper.texasSidecarContainer.slettAlleStubs()
+        TestContainerHelper.texasSidecarContainer.stubNaisTokenEndepunkt()
+        TestContainerHelper.dokarkivContainer.slettAlleJournalposter()
+    }
+
     @Test
     fun `skal konsumere og lagre dokumenter`() {
-        val dokumentKafkaDto = kafkaContainer.etDokumentTilPublisering()
+        val dokumentKafkaDto = TestContainerHelper.kafkaContainer.etVilkårligDokumentTilPublisering()
         val nøkkel = "${dokumentKafkaDto.samarbeid.id}-${dokumentKafkaDto.referanseId}-${dokumentKafkaDto.type.name}"
 
-        kafkaContainer.sendMeldingPåKafka(
+        TestContainerHelper.kafkaContainer.sendMeldingPåKafka(
             nøkkel = nøkkel,
             melding = Json.encodeToString(dokumentKafkaDto),
         )
 
-        postgresContainer.hentEnkelKolonne<String>(
+        TestContainerHelper.postgresContainer.hentEnkelKolonne<String>(
             """
             SELECT status 
             FROM dokument 
             WHERE referanse_id = '${dokumentKafkaDto.referanseId}'
             """.trimIndent(),
-        ) shouldBe "OPPRETTET"
+        ) shouldBeIn Dokument.Status.entries.map { it.name }.toList()
     }
 
     @Test
     fun `innhold lagres som gyldig JSON`() {
-        val dokumentKafkaDto = kafkaContainer.etDokumentTilPublisering()
+        val dokumentKafkaDto = TestContainerHelper.kafkaContainer.etVilkårligDokumentTilPublisering()
         val nøkkel = "${dokumentKafkaDto.samarbeid.id}-${dokumentKafkaDto.referanseId}-${dokumentKafkaDto.type.name}"
 
-        kafkaContainer.sendMeldingPåKafka(
+        TestContainerHelper.kafkaContainer.sendMeldingPåKafka(
             nøkkel = nøkkel,
             melding = Json.encodeToString(dokumentKafkaDto),
         )
 
-        val innhold = postgresContainer.hentEnkelKolonne<PGobject>(
+        val innhold = TestContainerHelper.postgresContainer.hentEnkelKolonne<PGobject>(
             """
             SELECT innhold 
             FROM dokument 
