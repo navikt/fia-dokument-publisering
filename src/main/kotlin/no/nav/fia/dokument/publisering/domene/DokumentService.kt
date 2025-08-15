@@ -27,7 +27,14 @@ class DokumentService(
     }
 
     fun håndterKafkaMelding(kafkamelding: String) {
-        val dokumentKafkaDto = json.decodeFromString<DokumentKafkaDto>(kafkamelding)
+        // -- TODO: fjern try/catch når feilende melgin er konsumert
+        val dokumentKafkaDto = try {
+            json.decodeFromString<DokumentKafkaDto>(kafkamelding)
+        } catch (e: Exception) {
+            log.error("Kunne ikke deserialisere kafkamelding", e)
+            return
+        }
+        // --
 
         /*
           TODO: implement denne slik at det skal være mulig å committe meldingen i Kafka etter dokumentet er først opprettet.
