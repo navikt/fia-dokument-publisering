@@ -21,6 +21,7 @@ import no.nav.fia.dokument.publisering.journalpost.JournalpostService
 import no.nav.fia.dokument.publisering.kafka.KafkaConfig
 import no.nav.fia.dokument.publisering.kafka.KafkaKonsument
 import no.nav.fia.dokument.publisering.kafka.KafkaTopics
+import no.nav.fia.dokument.publisering.kafka.KvitteringProdusent
 import no.nav.fia.dokument.publisering.pdfgen.PiaPdfgenService
 import org.slf4j.LoggerFactory
 
@@ -42,6 +43,10 @@ fun main() {
     val dokumentService = DokumentService(
         dokumentRepository = dokumentRepository,
         journalpostService = journalpostService,
+        kvitteringProdusent = KvitteringProdusent(
+            kafka = KafkaConfig(),
+            topic = KafkaTopics.DOKUMENT_KVITTERING
+        ),
     )
 
     val applikasjonsServer =

@@ -7,6 +7,7 @@ enum class KafkaTopics(
     private val prefix: String = "pia",
 ) {
     DOKUMENT_PUBLISERING("dokument-publisering-v1"),
+    DOKUMENT_KVITTERING("dokument-kvittering-v1"),
     ;
 
     val konsumentGruppe
