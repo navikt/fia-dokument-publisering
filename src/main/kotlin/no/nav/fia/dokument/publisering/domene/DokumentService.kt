@@ -9,6 +9,8 @@ import no.nav.fia.dokument.publisering.api.DokumentDto
 import no.nav.fia.dokument.publisering.db.DokumentRepository
 import no.nav.fia.dokument.publisering.domene.Dokument
 import no.nav.fia.dokument.publisering.journalpost.JournalpostService
+import no.nav.fia.dokument.publisering.kafka.Kvittering
+import no.nav.fia.dokument.publisering.kafka.KvitteringProdusent
 import no.nav.fia.dokument.publisering.kafka.dto.DokumentKafkaDto
 import no.nav.fia.dokument.publisering.kafka.dto.SpørreundersøkelseInnholdIDokumentDto
 import org.slf4j.LoggerFactory
@@ -19,6 +21,7 @@ import kotlin.jvm.java
 class DokumentService(
     val dokumentRepository: DokumentRepository,
     val journalpostService: JournalpostService,
+    val kvitteringProdusent: KvitteringProdusent
 ) {
     private val log = LoggerFactory.getLogger(this::class.java)
 
@@ -67,6 +70,16 @@ class DokumentService(
                     journalpostId = journalpostResultat.journalpostId,
                     publisertDato = journalføringDato,
                 )
+                kvitteringProdusent.sendPåKafka(
+                    Kvittering(
+                        referanseId = dokument.referanseId.toString(),
+                        samarbeidId = dokument.samarbeidId,
+                        dokumentId = dokument.dokumentId.toString(),
+                        journalpostId = journalpostResultat.journalpostId,
+                        publisertDato = journalføringDato,
+                    )
+                )
+
             } catch (e: Exception) {
                 log.warn(
                     "Feil under journalføring av dokument med referanseId: '${dokumentKafkaDto.referanseId}'",
@@ -80,10 +93,12 @@ class DokumentService(
         }
     }
 
-    fun hentPubliserteDokumenter(orgnr: String): List<Dokument> = dokumentRepository.hentPubliserteDokumenter(orgnr = orgnr)
+    fun hentPubliserteDokumenter(orgnr: String): List<Dokument> =
+        dokumentRepository.hentPubliserteDokumenter(orgnr = orgnr)
 
     fun hentEtPublisertDokument(dokumentId: UUID): Either<Feil, Dokument> =
-        dokumentRepository.hentEtPublisertDokument(dokumentId = dokumentId)?.right() ?: DokumentFeil.`fant ikke dokument`.left()
+        dokumentRepository.hentEtPublisertDokument(dokumentId = dokumentId)?.right()
+            ?: DokumentFeil.`fant ikke dokument`.left()
 }
 
 fun DokumentKafkaDto.tilDomene(): Dokument =

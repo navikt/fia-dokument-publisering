@@ -3,8 +3,10 @@ package no.nav.fia.dokument.publisering.kafka
 import no.nav.fia.dokument.publisering.NaisEnvironment
 import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.consumer.ConsumerConfig
+import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.common.config.SaslConfigs
 import org.apache.kafka.common.config.SslConfigs
+import org.apache.kafka.common.serialization.StringSerializer
 
 class KafkaConfig(
     val brokers: String = NaisEnvironment.kafkaBrokers,
@@ -28,6 +30,21 @@ class KafkaConfig(
             SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG to credstorePassword,
             SslConfigs.SSL_KEY_PASSWORD_CONFIG to credstorePassword,
         )
+
+    fun producerProperties(clientId: String): Map<String, Any> {
+        val producerConfigs = mutableMapOf(
+            ProducerConfig.BOOTSTRAP_SERVERS_CONFIG to brokers,
+            ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java,
+            ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java,
+            ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG to true, // Den sikrer rekkefølge
+            ProducerConfig.ACKS_CONFIG to "all", // Den sikrer at data ikke mistes
+            ProducerConfig.CLIENT_ID_CONFIG to clientId,
+        )
+        if (truststoreLocation.isNotEmpty()) {
+            producerConfigs.putAll(securityConfigs())
+        }
+        return producerConfigs.toMap()
+    }
 
     fun consumerProperties(konsumentGruppe: String) =
         baseConsumerProperties(konsumentGruppe).apply {
