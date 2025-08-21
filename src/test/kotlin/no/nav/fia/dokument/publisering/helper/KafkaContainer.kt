@@ -1,10 +1,14 @@
 package no.nav.fia.dokument.publisering.helper
 
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.time.withTimeout
 import kotlinx.coroutines.time.withTimeoutOrNull
 import kotlinx.datetime.toKotlinLocalDateTime
 import no.nav.fia.dokument.publisering.domene.Dokument
+import no.nav.fia.dokument.publisering.kafka.KafkaConfig
 import no.nav.fia.dokument.publisering.kafka.KafkaTopics
 import no.nav.fia.dokument.publisering.kafka.dto.DokumentKafkaDto
 import no.nav.fia.dokument.publisering.kafka.dto.NavEnhet
@@ -15,11 +19,13 @@ import no.nav.fia.dokument.publisering.kafka.dto.VirksomhetDto
 import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.admin.AdminClient
 import org.apache.kafka.clients.admin.AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG
+import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.clients.producer.RecordMetadata
 import org.apache.kafka.common.config.SaslConfigs
+import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.kafka.common.serialization.StringSerializer
 import org.testcontainers.containers.Network
 import org.testcontainers.containers.output.Slf4jLogConsumer
@@ -30,6 +36,7 @@ import java.time.Duration
 import java.time.LocalDateTime.now
 import java.util.TimeZone
 import java.util.UUID
+import java.util.concurrent.atomic.AtomicBoolean
 
 class KafkaContainer(
     network: Network,
@@ -99,6 +106,50 @@ class KafkaContainer(
             ) <= recordMetadata.offset()
         )
     }
+
+    suspend fun ventOgKonsumerKafkaMeldinger(
+        key: String,
+        konsument: KafkaConsumer<String, String>,
+        block: (meldinger: List<String>) -> Unit,
+    ) {
+        withTimeout(Duration.ofSeconds(5)) {
+            launch {
+                delay(20) // -- vent noen millisec fordi vi vet at det er forventet at noe skal ligge i kafka
+                val funnetNoenMeldinger = AtomicBoolean()
+                val harPrøvdFlereGanger = AtomicBoolean()
+                val alleMeldinger = mutableListOf<String>()
+                while (this.isActive && !harPrøvdFlereGanger.get()) {
+                    val records = konsument.poll(Duration.ofMillis(1))
+                    val meldinger = records
+                        .filter { it.key() == key }
+                        .map { it.value() }
+                    if (meldinger.isNotEmpty()) {
+                        funnetNoenMeldinger.set(true)
+                        alleMeldinger.addAll(meldinger)
+                        konsument.commitSync()
+                    } else {
+                        if (funnetNoenMeldinger.get()) {
+                            harPrøvdFlereGanger.set(true)
+                        }
+                    }
+                }
+                block(alleMeldinger)
+            }
+        }
+    }
+
+    fun nyKonsument(topic: KafkaTopics) =
+        KafkaConfig(
+            brokers = container.bootstrapServers,
+            truststoreLocation = "",
+            keystoreLocation = "",
+            credstorePassword = "",
+        ).consumerProperties(
+            konsumentGruppe = topic.konsumentGruppe,
+        )
+            .let { config ->
+                KafkaConsumer(config, StringDeserializer(), StringDeserializer())
+            }
 
     private fun consumerSinOffset(
         consumerGroup: String,
