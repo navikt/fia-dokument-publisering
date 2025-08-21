@@ -5,7 +5,7 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-permissions: {}
+permissions: { }
 
 jobs:
   build:
@@ -45,7 +45,7 @@ jobs:
       id-token: write
     strategy:
       matrix:
-        cluster: [dev]
+        cluster: [ dev ]
     name: Deploy app to ${{ matrix.cluster }}
     needs: build
     if: github.ref == 'refs/heads/main'
@@ -66,7 +66,7 @@ jobs:
       id-token: write
     name: Deploy branch to dev
     needs: build
-    if: github.ref == 'refs/heads/journalforing-av-dokument'
+    if: github.ref == 'refs/heads/kvittering'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
