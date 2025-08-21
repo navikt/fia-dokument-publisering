@@ -9,7 +9,7 @@ import no.nav.fia.dokument.publisering.api.DokumentDto
 import no.nav.fia.dokument.publisering.db.DokumentRepository
 import no.nav.fia.dokument.publisering.domene.Dokument
 import no.nav.fia.dokument.publisering.journalpost.JournalpostService
-import no.nav.fia.dokument.publisering.kafka.Kvittering
+import no.nav.fia.dokument.publisering.kafka.KvitteringDto
 import no.nav.fia.dokument.publisering.kafka.KvitteringProdusent
 import no.nav.fia.dokument.publisering.kafka.dto.DokumentKafkaDto
 import no.nav.fia.dokument.publisering.kafka.dto.SpørreundersøkelseInnholdIDokumentDto
@@ -71,11 +71,12 @@ class DokumentService(
                     publisertDato = journalføringDato,
                 )
                 kvitteringProdusent.sendPåKafka(
-                    Kvittering(
+                    KvitteringDto(
+                        dokumentId = dokument.dokumentId.toString(),
                         referanseId = dokument.referanseId.toString(),
                         samarbeidId = dokument.samarbeidId,
-                        dokumentId = dokument.dokumentId.toString(),
                         journalpostId = journalpostResultat.journalpostId,
+                        type = dokument.type.name,
                         publisertDato = journalføringDato,
                     )
                 )
