@@ -21,3 +21,6 @@ spec:
     - team: pia
       application: fia-dokument-publisering
       access: readwrite
+    - team: pia
+      application: pia-devops
+      access: read
