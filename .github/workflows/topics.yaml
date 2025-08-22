@@ -24,7 +24,7 @@ jobs:
         uses: nais/deploy/actions/deploy@v2
         env:
           CLUSTER: ${{ matrix.cluster }}-gcp
-          RESOURCE: "\ 
+          RESOURCE: "\
             .nais/topics/dokument-publisering-topic.yaml,\
             .nais/topics/dokument-kvittering-topic.yaml"
           VARS: .nais/${{ matrix.cluster }}.yaml
