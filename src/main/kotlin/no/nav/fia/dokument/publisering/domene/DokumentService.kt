@@ -123,6 +123,8 @@ fun List<Dokument>.tilDto() = this.map { it.tilDto() }
 fun Dokument.tilDto(): DokumentDto =
     DokumentDto(
         dokumentId = dokumentId.toString(),
+        type = type.name,
+        samarbeidNavn = samarbeidNavn,
         innhold = innhold,
     )
 
