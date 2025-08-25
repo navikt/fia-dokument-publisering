@@ -32,11 +32,12 @@ fun Route.dokumentPubliseringRoutes(dokumentService: DokumentService) {
         )
     }
 
-    get("$DOKUMENT_PUBLISERING_PATH/{dokumentId}") {
+    get("$DOKUMENT_PUBLISERING_PATH/orgnr/{orgnr}/dokumentId/{dokumentId}") {
         val dokumentId = call.dokumentId ?: return@get call.respond(
             status = HttpStatusCode.BadRequest,
             message = "Ugyldig dokumentId",
         )
+        // TODO: Sjekk at orgnr og dokument hører sammen
 
         dokumentService.hentEtPublisertDokument(dokumentId = dokumentId).map { dokument ->
             call.respond(

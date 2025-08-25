@@ -21,7 +21,7 @@ import kotlin.jvm.java
 class DokumentService(
     val dokumentRepository: DokumentRepository,
     val journalpostService: JournalpostService,
-    val kvitteringProdusent: KvitteringProdusent
+    val kvitteringProdusent: KvitteringProdusent,
 ) {
     private val log = LoggerFactory.getLogger(this::class.java)
 
@@ -78,9 +78,8 @@ class DokumentService(
                         journalpostId = journalpostResultat.journalpostId,
                         type = dokument.type.name,
                         publisertDato = journalføringDato,
-                    )
+                    ),
                 )
-
             } catch (e: Exception) {
                 log.warn(
                     "Feil under journalføring av dokument med referanseId: '${dokumentKafkaDto.referanseId}'",
@@ -94,12 +93,11 @@ class DokumentService(
         }
     }
 
-    fun hentPubliserteDokumenter(orgnr: String): List<Dokument> =
-        dokumentRepository.hentPubliserteDokumenter(orgnr = orgnr)
+    fun hentPubliserteDokumenter(orgnr: String): List<Dokument> = dokumentRepository.hentPubliserteDokumenter(orgnr = orgnr)
 
     fun hentEtPublisertDokument(dokumentId: UUID): Either<Feil, Dokument> =
         dokumentRepository.hentEtPublisertDokument(dokumentId = dokumentId)?.right()
-            ?: DokumentFeil.`fant ikke dokument`.left()
+            ?: DokumentFeil.`fant ikke dokument`.left() // TODO: Sjekk at orgnr og dokument hører sammen
 }
 
 fun DokumentKafkaDto.tilDomene(): Dokument =

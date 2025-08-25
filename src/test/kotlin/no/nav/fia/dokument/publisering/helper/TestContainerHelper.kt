@@ -68,10 +68,11 @@ class TestContainerHelper {
 
         suspend fun hentEtPublisertDokument(
             dokumentId: UUID,
+            orgnr: String,
             config: HttpRequestBuilder.() -> Unit = {},
         ): HttpResponse =
             fiaDokumentPubliseringContainer.performGet(
-                url = "$DOKUMENT_PUBLISERING_PATH/$dokumentId",
+                url = "$DOKUMENT_PUBLISERING_PATH/orgnr/$orgnr/dokumentId/$dokumentId",
                 config = config,
             )
 

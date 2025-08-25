@@ -95,7 +95,7 @@ class DokumentApiTest {
 
         TestContainerHelper.kafkaContainer.sendMeldingPåKafka(
             nøkkel = nøkkel,
-            melding = Json.Default.encodeToString(dokumentKafkaDto),
+            melding = Json.encodeToString(dokumentKafkaDto),
         )
 
         runBlocking {
@@ -109,7 +109,7 @@ class DokumentApiTest {
                 ),
             )
             response.status.value shouldBe 200
-            val oppfrisketListeAvDokumenter = Json.Default.decodeFromString<List<DokumentDto>>(response.bodyAsText())
+            val oppfrisketListeAvDokumenter = Json.decodeFromString<List<DokumentDto>>(response.bodyAsText())
             oppfrisketListeAvDokumenter shouldHaveSize 1
         }
     }
@@ -161,7 +161,7 @@ class DokumentApiTest {
 
         TestContainerHelper.kafkaContainer.sendMeldingPåKafka(
             nøkkel = nøkkel,
-            melding = Json.Default.encodeToString(dokumentKafkaDto),
+            melding = Json.encodeToString(dokumentKafkaDto),
         )
 
         val dokumentId = TestContainerHelper.postgresContainer.hentEnkelKolonne<String>(
@@ -184,6 +184,7 @@ class DokumentApiTest {
 
             val response = TestContainerHelper.hentEtPublisertDokument(
                 dokumentId = dokumentId.tilUUID("dokumentId"),
+                orgnr = orgnr,
                 config = TestContainerHelper.withTokenXToken(
                     claims = mapOf(
                         "acr" to "Level4",
@@ -208,7 +209,7 @@ class DokumentApiTest {
 
         TestContainerHelper.kafkaContainer.sendMeldingPåKafka(
             nøkkel = nøkkel,
-            melding = Json.Default.encodeToString(dokumentKafkaDto),
+            melding = Json.encodeToString(dokumentKafkaDto),
         )
 
         val dokumentId = TestContainerHelper.postgresContainer.hentEnkelKolonne<String>(
@@ -222,6 +223,7 @@ class DokumentApiTest {
         runBlocking {
             TestContainerHelper.hentEtPublisertDokument(
                 dokumentId = dokumentId.tilUUID("dokumentId"),
+                orgnr = dokumentKafkaDto.virksomhet.orgnummer,
                 config = TestContainerHelper.withTokenXToken(
                     claims = mapOf(
                         "acr" to "Level4",
