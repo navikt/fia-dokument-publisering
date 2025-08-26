@@ -203,7 +203,6 @@ class KafkaContainer(
             dokumentOpprettetAv = navIdent,
             innhold = SpørreundersøkelseInnholdIDokumentDto(
                 id = referanseId.toString(),
-                spørreundersøkelseOpprettetAv = "X12345",
                 fullførtTidspunkt = now().toKotlinLocalDateTime(),
                 spørsmålMedSvarPerTema = emptyList(),
             ),

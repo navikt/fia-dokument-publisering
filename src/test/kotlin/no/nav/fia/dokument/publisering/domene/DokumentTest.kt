@@ -55,6 +55,6 @@ class DokumentTest {
         )
         val jsonValue: String = innhold.value!!
         val jsonInnhold = Json.decodeFromString<SpørreundersøkelseInnholdIDokumentDto>(jsonValue)
-        jsonInnhold.spørreundersøkelseOpprettetAv shouldBe dokumentKafkaDto.innhold.spørreundersøkelseOpprettetAv
+        jsonInnhold.id shouldBe dokumentKafkaDto.innhold.id
     }
 }

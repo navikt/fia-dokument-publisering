@@ -42,7 +42,6 @@ data class SamarbeidDto(
 @Serializable
 data class SpørreundersøkelseInnholdIDokumentDto(
     val id: String,
-    val spørreundersøkelseOpprettetAv: String,
     val fullførtTidspunkt: LocalDateTime,
     val spørsmålMedSvarPerTema: List<TemaResultatDto>,
 )
