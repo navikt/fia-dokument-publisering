@@ -6,6 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.slf4j.LoggerFactory
@@ -45,7 +46,7 @@ class KafkaKonsument(
         log.info("Lytter nå på topic: ${kafkaTopic.navnMedNamespace}")
         while (applikasjonsHelse.ready) {
             konsument.poll(Duration.ofMillis(10))
-                .map { melding ->
+                .map { melding: ConsumerRecord<String, String> ->
                     log.info("Mottok kafkamelding med nøkkel: ${melding.key()}")
                     melding.value()
                 }.forEach { value ->

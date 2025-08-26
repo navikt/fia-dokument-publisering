@@ -28,11 +28,14 @@ import org.slf4j.LoggerFactory
 private val log = LoggerFactory.getLogger("no.nav.fia.dokument.publisering")
 
 fun main() {
+    log.info("Applikasjon start - init applikasjonshelse")
     val applikasjonsHelse = ApplikasjonsHelse()
 
+    log.info("Applikasjon start - DB migrering")
     val dataSource = createDataSource(database = NaisEnvironment().database)
     runMigration(dataSource = dataSource)
 
+    log.info("Applikasjon start - Oppretter tjenester")
     val entraIdTokenAuthClient = EntraIdTokenAuthClient(tokenEndpoint = NaisEnvironment.tokenEndpoint)
     val pdfgenService = PiaPdfgenService()
     val journalpostService = JournalpostService(
@@ -61,13 +64,15 @@ fun main() {
                 )
             },
         )
-
+    log.info("Applikasjon start - Applikasjonsserver er opprettet, setter applikasjonsHelse.ready til 'true'")
     applikasjonsHelse.ready = true
+    log.info("Applikasjon start - Starter kafka konsumenter")
     settOppKonsumenter(
         applikasjonsHelse = applikasjonsHelse,
         dokumentService = dokumentService,
     )
 
+    log.info("Applikasjon start - legger til shutdown hook")
     Runtime.getRuntime().addShutdownHook(
         Thread {
             log.info("Stopper applikasjonen fra shutdown hook")
@@ -77,6 +82,7 @@ fun main() {
             applikasjonsServer.stop(1000, 5000)
         },
     )
+    log.info("Applikasjon start - Starter applikasjonsserver")
     applikasjonsServer.start(wait = true)
 }
 
