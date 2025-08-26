@@ -25,18 +25,17 @@ import no.nav.fia.dokument.publisering.kafka.KvitteringDto
 import no.nav.fia.dokument.publisering.kafka.dto.DokumentKafkaDto
 import org.junit.AfterClass
 import org.junit.BeforeClass
-import java.util.*
+import java.util.UUID
 import kotlin.test.Test
 
 class KvitteringProdusentTest {
-
     companion object {
         private val topic = KafkaTopics.DOKUMENT_KVITTERING
         private val konsument = kafkaContainer.nyKonsument(topic = topic)
 
         @BeforeClass
         @JvmStatic
-        fun setUp() = konsument.subscribe(mutableListOf(topic.navn))
+        fun setUp() = konsument.subscribe(mutableListOf(topic.navnMedNamespace))
 
         @AfterClass
         @JvmStatic
@@ -48,6 +47,7 @@ class KvitteringProdusentTest {
 
     @Test
     fun `skal sende kvittering for et dokument på kafka`() {
+        TestContainerHelper.texasSidecarContainer.stubNaisTokenEndepunkt()
         val dokumentKafkaDto = kafkaContainer.etVilkårligDokumentTilPublisering()
         val nøkkel = "${dokumentKafkaDto.samarbeid.id}-${dokumentKafkaDto.referanseId}-${dokumentKafkaDto.type.name}"
         val orgnr = dokumentKafkaDto.virksomhet.orgnummer
@@ -113,7 +113,7 @@ class KvitteringProdusentTest {
                         val kvitteringDto = Json.decodeFromString<KvitteringDto>(melding)
                         kvitteringDto.dokumentId shouldBe dokumentId
                     }
-                }
+                },
             )
         }
     }
