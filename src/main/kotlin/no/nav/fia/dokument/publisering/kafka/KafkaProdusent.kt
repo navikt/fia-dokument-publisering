@@ -24,7 +24,7 @@ abstract class KafkaProdusent<T>(
     ) {
         produsent.send(
             ProducerRecord(
-                topic.navn,
+                topic.navnMedNamespace,
                 nøkkel,
                 verdi,
             ),
