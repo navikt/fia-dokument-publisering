@@ -24,6 +24,7 @@ import no.nav.fia.dokument.publisering.journalpost.Kanal
 import no.nav.fia.dokument.publisering.journalpost.Sak
 import no.nav.fia.dokument.publisering.journalpost.Sakstype
 import no.nav.fia.dokument.publisering.journalpost.Variantformat
+import no.nav.fia.dokument.publisering.kafka.dto.DokumentKafkaDto
 import tilUUID
 import java.util.UUID
 import kotlin.test.BeforeTest
@@ -49,49 +50,8 @@ class DokumentApiTest {
 
     @Test
     fun `skal hente alle publiserte dokumenter for en virksomhet`() {
-        TestContainerHelper.texasSidecarContainer.stubNaisTokenEndepunkt()
-        val dokumentKafkaDto = TestContainerHelper.kafkaContainer.etVilkårligDokumentTilPublisering(orgnr = "111111111")
+        val dokumentKafkaDto = mockAltSomSkalTilForAtEtDokumentSkalBliPublisert("111111111")
         val nøkkel = "${dokumentKafkaDto.samarbeid.id}-${dokumentKafkaDto.referanseId}-${dokumentKafkaDto.type.name}"
-        val orgnr = dokumentKafkaDto.virksomhet.orgnummer
-        val virksomhetsnavn = dokumentKafkaDto.virksomhet.navn
-        val navenhet = dokumentKafkaDto.sak.navenhet
-
-        TestContainerHelper.dokarkivContainer.leggTilJournalPost(
-            JournalpostDto(
-                tittel = "Behovsvurdering",
-                tema = JournalpostTema.IAR,
-                bruker = Bruker(
-                    id = orgnr,
-                    idType = IdType.ORGNR,
-                ),
-                dokumenter = listOf(
-                    JournalpostDokument(
-                        tittel = "Behovsvurdering",
-                        dokumentvarianter = listOf(
-                            DokumentVariant(
-                                filtype = FilType.PDFA,
-                                variantformat = Variantformat.ARKIV,
-                                fysiskDokument = "base64EncodedPdfContent",
-                            ),
-                        ),
-                    ),
-                ),
-                journalfoerendeEnhet = navenhet.enhetsnummer,
-                eksternReferanseId = UUID.randomUUID().toString(),
-                sak = Sak(
-                    sakstype = Sakstype.FAGSAK,
-                    fagsakId = dokumentKafkaDto.sak.saksnummer,
-                    fagsaksystem = FagsakSystem.FIA,
-                ),
-                kanal = Kanal.NAV_NO_UTEN_VARSLING,
-                journalposttype = JournalpostType.UTGAAENDE,
-                avsenderMottaker = AvsenderMottaker(
-                    id = orgnr,
-                    idType = IdType.ORGNR,
-                    navn = virksomhetsnavn,
-                ),
-            ),
-        )
 
         TestContainerHelper.kafkaContainer.sendMeldingPåKafka(
             nøkkel = nøkkel,
@@ -232,5 +192,88 @@ class DokumentApiTest {
                 ),
             ).status shouldBe HttpStatusCode.NotFound
         }
+    }
+
+    @Test
+    fun `skal IKKE kunne hente dokument for et annet orgnr enn sitt eget`() {
+        val dokumentKafkaDto = mockAltSomSkalTilForAtEtDokumentSkalBliPublisert("987654321")
+        val nøkkel = "${dokumentKafkaDto.samarbeid.id}-${dokumentKafkaDto.referanseId}-${dokumentKafkaDto.type.name}"
+
+        TestContainerHelper.kafkaContainer.sendMeldingPåKafka(
+            nøkkel = nøkkel,
+            melding = Json.encodeToString(dokumentKafkaDto),
+        )
+
+        runBlocking {
+            val alleDokumenter = TestContainerHelper.hentAllePubliserteDokumenter(
+                orgnr = dokumentKafkaDto.virksomhet.orgnummer,
+                config = TestContainerHelper.withTokenXToken(
+                    claims = mapOf(
+                        "acr" to "Level4",
+                        "pid" to "123",
+                    ),
+                ),
+            )
+            val dokumentId = Json.decodeFromString<List<DokumentDto>>(alleDokumenter.bodyAsText()).first().dokumentId
+
+            TestContainerHelper.hentEtPublisertDokument(
+                dokumentId = dokumentId.tilUUID("dokumentId"),
+                orgnr = "123456789",
+                config = TestContainerHelper.withTokenXToken(
+                    claims = mapOf(
+                        "acr" to "Level4",
+                        "pid" to "123",
+                    ),
+                ),
+            ).status shouldBe HttpStatusCode.BadRequest
+        }
+    }
+
+
+    private fun mockAltSomSkalTilForAtEtDokumentSkalBliPublisert(orgnr: String): DokumentKafkaDto {
+        TestContainerHelper.texasSidecarContainer.stubNaisTokenEndepunkt()
+        val dokumentKafkaDto = TestContainerHelper.kafkaContainer.etVilkårligDokumentTilPublisering(orgnr = orgnr)
+
+        val orgnr = dokumentKafkaDto.virksomhet.orgnummer
+        val virksomhetsnavn = dokumentKafkaDto.virksomhet.navn
+        val navenhet = dokumentKafkaDto.sak.navenhet
+
+        TestContainerHelper.dokarkivContainer.leggTilJournalPost(
+            JournalpostDto(
+                tittel = "Behovsvurdering",
+                tema = JournalpostTema.IAR,
+                bruker = Bruker(
+                    id = orgnr,
+                    idType = IdType.ORGNR,
+                ),
+                dokumenter = listOf(
+                    JournalpostDokument(
+                        tittel = "Behovsvurdering",
+                        dokumentvarianter = listOf(
+                            DokumentVariant(
+                                filtype = FilType.PDFA,
+                                variantformat = Variantformat.ARKIV,
+                                fysiskDokument = "base64EncodedPdfContent",
+                            ),
+                        ),
+                    ),
+                ),
+                journalfoerendeEnhet = navenhet.enhetsnummer,
+                eksternReferanseId = UUID.randomUUID().toString(),
+                sak = Sak(
+                    sakstype = Sakstype.FAGSAK,
+                    fagsakId = dokumentKafkaDto.sak.saksnummer,
+                    fagsaksystem = FagsakSystem.FIA,
+                ),
+                kanal = Kanal.NAV_NO_UTEN_VARSLING,
+                journalposttype = JournalpostType.UTGAAENDE,
+                avsenderMottaker = AvsenderMottaker(
+                    id = orgnr,
+                    idType = IdType.ORGNR,
+                    navn = virksomhetsnavn,
+                ),
+            ),
+        )
+        return dokumentKafkaDto
     }
 }

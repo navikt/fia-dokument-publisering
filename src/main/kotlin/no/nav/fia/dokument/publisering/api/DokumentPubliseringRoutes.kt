@@ -1,7 +1,6 @@
 package no.nav.fia.dokument.publisering.api
 
 import DokumentService
-import Feil
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.response.respond
@@ -33,13 +32,22 @@ fun Route.dokumentPubliseringRoutes(dokumentService: DokumentService) {
     }
 
     get("$DOKUMENT_PUBLISERING_PATH/orgnr/{orgnr}/dokumentId/{dokumentId}") {
+        val orgnr = call.orgnr ?: return@get call.respond(
+            status = HttpStatusCode.BadRequest,
+            message = "Ugyldig orgnr",
+        )
         val dokumentId = call.dokumentId ?: return@get call.respond(
             status = HttpStatusCode.BadRequest,
             message = "Ugyldig dokumentId",
         )
-        // TODO: Sjekk at orgnr og dokument hører sammen
 
         dokumentService.hentEtPublisertDokument(dokumentId = dokumentId).map { dokument ->
+            if (orgnr != dokument.orgnr) {
+                return@map call.respond(
+                    status = HttpStatusCode.BadRequest,
+                    message = "Dette dokumentet hører ikke til ditt orgnr",
+                )
+            }
             call.respond(
                 status = HttpStatusCode.OK,
                 message = dokument.tilDto(),
@@ -52,5 +60,3 @@ fun Route.dokumentPubliseringRoutes(dokumentService: DokumentService) {
 
 val ApplicationCall.orgnr get() = parameters["orgnr"]
 val ApplicationCall.dokumentId get() = parameters["dokumentId"]?.tilUUID("dokumentId")
-
-suspend fun ApplicationCall.sendFeil(feil: Feil) = respond(feil.httpStatusCode, feil.feilmelding)
