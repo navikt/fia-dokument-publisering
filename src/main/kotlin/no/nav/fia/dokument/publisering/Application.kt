@@ -48,7 +48,7 @@ fun main() {
         journalpostService = journalpostService,
         kvitteringProdusent = KvitteringProdusent(
             kafka = KafkaConfig(),
-            topic = KafkaTopics.DOKUMENT_KVITTERING
+            topic = KafkaTopics.DOKUMENT_KVITTERING,
         ),
     )
 
@@ -64,8 +64,6 @@ fun main() {
                 )
             },
         )
-    log.info("Applikasjon start - Applikasjonsserver er opprettet, setter applikasjonsHelse.ready til 'true'")
-    applikasjonsHelse.ready = true
     log.info("Applikasjon start - Starter kafka konsumenter")
     settOppKonsumenter(
         applikasjonsHelse = applikasjonsHelse,
