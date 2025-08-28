@@ -12,25 +12,6 @@ import tilUUID
 const val DOKUMENT_PUBLISERING_PATH = "/dokument"
 
 fun Route.dokumentPubliseringRoutes(dokumentService: DokumentService) {
-    get("$DOKUMENT_PUBLISERING_PATH/orgnr/{orgnr}") {
-        val orgnr = call.orgnr ?: return@get call.respond(
-            status = HttpStatusCode.BadRequest,
-            message = "Ugyldig orgnr",
-        )
-
-        if (orgnr.isEmpty()) {
-            return@get call.respond(
-                status = HttpStatusCode.BadRequest,
-                message = "Ugyldig orgnr (er tom)",
-            )
-        }
-
-        call.respond(
-            status = HttpStatusCode.OK,
-            message = dokumentService.hentPubliserteDokumenter(orgnr = orgnr).tilDto(),
-        )
-    }
-
     get("$DOKUMENT_PUBLISERING_PATH/orgnr/{orgnr}/dokumentId/{dokumentId}") {
         val orgnr = call.orgnr ?: return@get call.respond(
             status = HttpStatusCode.BadRequest,

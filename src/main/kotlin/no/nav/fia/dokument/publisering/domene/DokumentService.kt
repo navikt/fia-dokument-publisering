@@ -16,7 +16,6 @@ import no.nav.fia.dokument.publisering.kafka.dto.SpørreundersøkelseInnholdIDok
 import org.slf4j.LoggerFactory
 import java.time.LocalDateTime.now
 import java.util.UUID
-import kotlin.jvm.java
 
 class DokumentService(
     val dokumentRepository: DokumentRepository,
@@ -93,8 +92,6 @@ class DokumentService(
         }
     }
 
-    fun hentPubliserteDokumenter(orgnr: String): List<Dokument> = dokumentRepository.hentPubliserteDokumenter(orgnr = orgnr)
-
     fun hentEtPublisertDokument(dokumentId: UUID): Either<Feil, Dokument> =
         dokumentRepository.hentEtPublisertDokument(dokumentId = dokumentId)?.right()
             ?: DokumentFeil.`fant ikke dokument`.left() // TODO: Sjekk at orgnr og dokument hører sammen
@@ -117,8 +114,6 @@ fun DokumentKafkaDto.tilDomene(): Dokument =
         publisert = null,
         sistEndret = null,
     )
-
-fun List<Dokument>.tilDto() = this.map { it.tilDto() }
 
 fun Dokument.tilDto(): DokumentDto =
     DokumentDto(

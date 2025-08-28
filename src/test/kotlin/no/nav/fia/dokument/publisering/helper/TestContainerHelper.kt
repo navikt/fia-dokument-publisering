@@ -76,15 +76,6 @@ class TestContainerHelper {
                 config = config,
             )
 
-        suspend fun hentAllePubliserteDokumenter(
-            orgnr: String,
-            config: HttpRequestBuilder.() -> Unit = {},
-        ): HttpResponse =
-            fiaDokumentPubliseringContainer.performGet(
-                url = "$DOKUMENT_PUBLISERING_PATH/orgnr/$orgnr",
-                config = config,
-            )
-
         internal fun withTokenXToken(claims: Map<String, String>): HttpRequestBuilder.() -> Unit =
             {
                 header(

@@ -1,10 +1,8 @@
 package no.nav.fia.dokument.publisering.api
 
-import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.ktor.client.call.body
-import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
@@ -40,37 +38,12 @@ class DokumentApiTest {
     @Test
     fun `Uinnlogget bruker får en 401 - Not Authorized i response`() {
         runBlocking {
-            val response = TestContainerHelper.hentAllePubliserteDokumenter(
+            val response = TestContainerHelper.hentEtPublisertDokument(
                 orgnr = "123456789",
+                dokumentId = UUID.randomUUID(),
                 config = TestContainerHelper.withoutGyldigTokenXToken(),
             )
             response.status.value shouldBe 401
-        }
-    }
-
-    @Test
-    fun `skal hente alle publiserte dokumenter for en virksomhet`() {
-        val dokumentKafkaDto = mockAltSomSkalTilForAtEtDokumentSkalBliPublisert("111111111")
-        val nøkkel = "${dokumentKafkaDto.samarbeid.id}-${dokumentKafkaDto.referanseId}-${dokumentKafkaDto.type.name}"
-
-        TestContainerHelper.kafkaContainer.sendMeldingPåKafka(
-            nøkkel = nøkkel,
-            melding = Json.encodeToString(dokumentKafkaDto),
-        )
-
-        runBlocking {
-            val response = TestContainerHelper.hentAllePubliserteDokumenter(
-                orgnr = dokumentKafkaDto.virksomhet.orgnummer,
-                config = TestContainerHelper.withTokenXToken(
-                    claims = mapOf(
-                        "acr" to "Level4",
-                        "pid" to "123",
-                    ),
-                ),
-            )
-            response.status.value shouldBe 200
-            val oppfrisketListeAvDokumenter = Json.decodeFromString<List<DokumentDto>>(response.bodyAsText())
-            oppfrisketListeAvDokumenter shouldHaveSize 1
         }
     }
 
@@ -205,16 +178,11 @@ class DokumentApiTest {
         )
 
         runBlocking {
-            val alleDokumenter = TestContainerHelper.hentAllePubliserteDokumenter(
-                orgnr = dokumentKafkaDto.virksomhet.orgnummer,
-                config = TestContainerHelper.withTokenXToken(
-                    claims = mapOf(
-                        "acr" to "Level4",
-                        "pid" to "123",
-                    ),
-                ),
+            val dokumentId = TestContainerHelper.postgresContainer.hentEnkelKolonne<String>(
+                """
+                SELECT dokument_id from dokument where referanse_id = '${dokumentKafkaDto.referanseId}'
+                """.trimIndent(),
             )
-            val dokumentId = Json.decodeFromString<List<DokumentDto>>(alleDokumenter.bodyAsText()).first().dokumentId
 
             TestContainerHelper.hentEtPublisertDokument(
                 dokumentId = dokumentId.tilUUID("dokumentId"),
@@ -228,7 +196,6 @@ class DokumentApiTest {
             ).status shouldBe HttpStatusCode.BadRequest
         }
     }
-
 
     private fun mockAltSomSkalTilForAtEtDokumentSkalBliPublisert(orgnr: String): DokumentKafkaDto {
         TestContainerHelper.texasSidecarContainer.stubNaisTokenEndepunkt()

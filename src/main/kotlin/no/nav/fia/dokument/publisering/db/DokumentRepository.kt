@@ -66,26 +66,6 @@ class DokumentRepository(
             )
         }
 
-    fun hentPubliserteDokumenter(orgnr: String): List<Dokument> =
-        using(sessionOf(dataSource)) { session ->
-            session.run(
-                action = queryOf(
-                    statement =
-                        """
-                        SELECT *
-                        FROM dokument
-                        WHERE orgnr = :orgnr AND status = :status
-                        """.trimIndent(),
-                    paramMap = mapOf(
-                        "orgnr" to orgnr,
-                        "status" to Dokument.Status.PUBLISERT.name,
-                    ),
-                ).map { row ->
-                    row.tilDokument()
-                }.asList,
-            )
-        }
-
     fun hentEtPublisertDokument(dokumentId: UUID): Dokument? =
         using(sessionOf(dataSource)) { session ->
             session.run(
@@ -114,14 +94,15 @@ class DokumentRepository(
     ) = using(sessionOf(dataSource)) { session ->
         session.run(
             action = queryOf(
-                statement = """
-                   UPDATE dokument SET 
-                     status = :status,
-                     journalpost_id = :journalpostId,             
-                     publisert = :publisert,
-                     sist_endret = :sist_endret
-                   WHERE dokument_id = :dokumentId
-                """.trimIndent(),
+                statement =
+                    """
+                    UPDATE dokument SET 
+                      status = :status,
+                      journalpost_id = :journalpostId,             
+                      publisert = :publisert,
+                      sist_endret = :sist_endret
+                    WHERE dokument_id = :dokumentId
+                    """.trimIndent(),
                 paramMap = mapOf(
                     "status" to status.name,
                     "dokumentId" to dokumentId.toString(),
