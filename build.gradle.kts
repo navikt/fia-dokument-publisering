@@ -47,7 +47,7 @@ dependencies {
 
     // -- div
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
-    implementation("org.apache.kafka:kafka-clients:3.9.0")
+    implementation("org.apache.kafka:kafka-clients:3.9.1")
 
     // Logg requests (kan sløyfes i vanlig drift)
     implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
