@@ -11,13 +11,14 @@ repositories {
     maven(url = "https://jitpack.io")
 }
 
-val ktorVersion = "3.1.3"
+val kotestVersion = "5.9.1"
 val kotlinVersion = "2.1.20"
+val ktorVersion = "3.1.3"
 val logbackVersion = "1.5.18"
 val logstashLogbackEncoderVersion = "8.1"
-val kotestVersion = "5.9.1"
-val testcontainersVersion = "1.21.0"
 val mockServerVersion = "1.0.19"
+val postgresqlVersion = "42.7.7"
+val testcontainersVersion = "1.21.3"
 
 dependencies {
     // -- ktor
@@ -40,7 +41,7 @@ dependencies {
     implementation("net.logstash.logback:logstash-logback-encoder:$logstashLogbackEncoderVersion")
 
     // -- DB
-    implementation("org.postgresql:postgresql:42.7.5")
+    implementation("org.postgresql:postgresql:$postgresqlVersion")
     implementation("com.zaxxer:HikariCP:6.3.0")
     implementation("org.flywaydb:flyway-database-postgresql:11.8.0")
     implementation("com.github.seratch:kotliquery:1.9.1")
