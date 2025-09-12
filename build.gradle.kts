@@ -11,7 +11,7 @@ repositories {
     maven(url = "https://jitpack.io")
 }
 
-val kotestVersion = "5.9.1"
+val kotestVersion = "6.0.3"
 val kotlinVersion = "2.2.20"
 val ktorVersion = "3.3.0"
 val logbackVersion = "1.5.18"
@@ -42,13 +42,13 @@ dependencies {
 
     // -- DB
     implementation("org.postgresql:postgresql:$postgresqlVersion")
-    implementation("com.zaxxer:HikariCP:6.3.0")
+    implementation("com.zaxxer:HikariCP:7.0.2")
     implementation("org.flywaydb:flyway-database-postgresql:11.12.0")
     implementation("com.github.seratch:kotliquery:1.9.1")
 
     // -- div
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
-    implementation("org.apache.kafka:kafka-clients:3.9.0")
+    implementation("org.apache.kafka:kafka-clients:4.1.0")
 
     // Logg requests (kan sløyfes i vanlig drift)
     implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
