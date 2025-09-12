@@ -12,8 +12,8 @@ repositories {
 }
 
 val kotestVersion = "5.9.1"
-val kotlinVersion = "2.1.20"
-val ktorVersion = "3.1.3"
+val kotlinVersion = "2.2.20"
+val ktorVersion = "3.3.0"
 val logbackVersion = "1.5.18"
 val logstashLogbackEncoderVersion = "8.1"
 val mockServerVersion = "1.0.19"
