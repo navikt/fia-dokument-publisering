@@ -1,6 +1,6 @@
 plugins {
-    kotlin("jvm") version "2.1.20"
-    kotlin("plugin.serialization") version "2.1.20"
+    kotlin("jvm") version "2.2.20"
+    kotlin("plugin.serialization") version "2.2.20"
     id("com.gradleup.shadow") version "8.3.5"
 }
 
@@ -16,7 +16,7 @@ val kotlinVersion = "2.2.20"
 val ktorVersion = "3.3.0"
 val logbackVersion = "1.5.18"
 val logstashLogbackEncoderVersion = "8.1"
-val mockServerVersion = "1.0.19"
+val mockServerVersion = "1.1.3"
 val postgresqlVersion = "42.7.7"
 val testcontainersVersion = "1.21.3"
 
@@ -43,7 +43,7 @@ dependencies {
     // -- DB
     implementation("org.postgresql:postgresql:$postgresqlVersion")
     implementation("com.zaxxer:HikariCP:6.3.0")
-    implementation("org.flywaydb:flyway-database-postgresql:11.8.0")
+    implementation("org.flywaydb:flyway-database-postgresql:11.12.0")
     implementation("com.github.seratch:kotliquery:1.9.1")
 
     // -- div
@@ -63,25 +63,25 @@ dependencies {
     testImplementation("org.testcontainers:kafka:$testcontainersVersion")
     testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
     // Mock-oauth2-server
-    testImplementation("no.nav.security:mock-oauth2-server:2.2.1")
+    testImplementation("no.nav.security:mock-oauth2-server:2.3.0")
     // Mockserver neolight
     testImplementation("software.xdev.mockserver:testcontainers:$mockServerVersion")
     testImplementation("software.xdev.mockserver:client:$mockServerVersion")
     // JWT utilities
-    testImplementation("com.nimbusds:nimbus-jose-jwt:10.3.1")
+    testImplementation("com.nimbusds:nimbus-jose-jwt:10.5")
     // -- validere pdfa
     testImplementation("org.verapdf:validation-model:1.28.2")
 
     constraints {
         testImplementation("org.apache.commons:commons-compress") {
             version {
-                require("1.27.1")
+                require("1.28.0")
             }
             because("testcontainers har sårbar versjon")
         }
         testImplementation("commons-io:commons-io") {
             version {
-                require("2.19.0")
+                require("2.20.0")
             }
             because("testcontainers har sårbar versjon")
         }
