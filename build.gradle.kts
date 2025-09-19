@@ -73,6 +73,14 @@ dependencies {
     testImplementation("org.verapdf:validation-model:1.28.2")
 
     constraints {
+        implementation("io.netty:netty-codec-http2") {
+            version {
+                require("4.2.6.Final")
+            }
+            because(
+                "ktor-server-netty har sårbar versjon",
+            )
+        }
         testImplementation("org.apache.commons:commons-compress") {
             version {
                 require("1.28.0")
