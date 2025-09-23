@@ -66,7 +66,7 @@ jobs:
       id-token: write
     name: Deploy branch to dev
     needs: build
-    if: github.ref == 'refs/heads/kvittering'
+    if: github.ref == 'refs/heads/fiks-pod-restart-loop'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
