@@ -15,22 +15,18 @@ spec:
     requests:
       cpu: {{requestsCpu}}
       memory: {{requestsMemory}}
-  startup:
-    path: /internal/isalive
-    port: 8080
-    periodSeconds: 2
-    failureThreshold: 30   # ~60s (30x2)
-    timeout: 5
   liveness:
     path: /internal/isalive
     port: 8080
-    initialDelay: 20
-    timeout: 60
+    initialDelay: 30
+    timeout: 5
+    failureThreshold: 10
   readiness:
     path: /internal/isready
     port: 8080
-    initialDelay: 20
-    timeout: 60
+    initialDelay: 30
+    timeout: 5
+    failureThreshold: 10
   azure:
     application:
       enabled: true
