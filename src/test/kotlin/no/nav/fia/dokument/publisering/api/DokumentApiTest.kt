@@ -1,7 +1,6 @@
 package no.nav.fia.dokument.publisering.api
 
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.string.shouldContain
 import io.ktor.client.call.body
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.runBlocking
@@ -48,7 +47,7 @@ class DokumentApiTest {
     }
 
     @Test
-    fun `skal returnere et publisert dokument med innhold`() {
+    fun `skal returnere et publisert dokument (BEHOVSVURDERING) med innhold`() {
         val dokumentKafkaDto = TestContainerHelper.kafkaContainer.etVilkårligDokumentTilPublisering()
         val nøkkel = "${dokumentKafkaDto.samarbeid.id}-${dokumentKafkaDto.referanseId}-${dokumentKafkaDto.type.name}"
         val orgnr = dokumentKafkaDto.virksomhet.orgnummer
@@ -129,9 +128,8 @@ class DokumentApiTest {
             response.status shouldBe HttpStatusCode.OK
 
             val publisertDokument = response.body<DokumentDto>()
-
             publisertDokument.dokumentId shouldBe dokumentId
-            publisertDokument.innhold shouldContain dokumentKafkaDto.referanseId
+            publisertDokument.innhold shouldBe dokumentKafkaDto.innhold
         }
     }
 

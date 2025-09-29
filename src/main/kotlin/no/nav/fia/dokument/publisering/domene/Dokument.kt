@@ -1,6 +1,7 @@
 package no.nav.fia.dokument.publisering.domene
 
 import kotlinx.datetime.LocalDateTime
+import kotlinx.serialization.json.JsonObject
 import java.util.UUID
 
 class Dokument(
@@ -13,7 +14,7 @@ class Dokument(
     val saksnummer: String,
     val samarbeidId: Int,
     val samarbeidNavn: String,
-    val innhold: String,
+    val innhold: JsonObject,
     val sendtTilPublisering: LocalDateTime,
     val opprettet: LocalDateTime,
     val publisert: LocalDateTime?,

@@ -25,9 +25,8 @@ import no.nav.fia.dokument.publisering.kafka.dto.DokumentKafkaDto
 import no.nav.fia.dokument.publisering.kafka.dto.SakDto
 import no.nav.fia.dokument.publisering.kafka.dto.VirksomhetDto
 import no.nav.fia.dokument.publisering.pdfgen.PdfDokumentDto
+import no.nav.fia.dokument.publisering.pdfgen.PdfType
 import no.nav.fia.dokument.publisering.pdfgen.PiaPdfgenService
-import no.nav.fia.dokument.publisering.pdfgen.ResultatDto
-import no.nav.fia.dokument.publisering.pdfgen.SpørreundersøkelseDto
 import org.slf4j.LoggerFactory
 import java.util.UUID
 
@@ -45,19 +44,14 @@ class JournalpostService(
         journalføringDato: LocalDateTime,
     ): JournalpostResultatDto {
         val base64EnkodetPdf = pdfgenService.genererBase64DokumentPdf(
-            spørreundersøkelsePdfDokumentDto = PdfDokumentDto(
+            pdfDokumentDto = PdfDokumentDto(
+                type = dokumentKafkaDto.type.tilPdfType(),
+                referanseId = dokumentKafkaDto.referanseId,
                 publiseringsdato = journalføringDato,
                 sak = dokumentKafkaDto.sak,
                 virksomhet = dokumentKafkaDto.virksomhet,
                 samarbeid = dokumentKafkaDto.samarbeid,
-                spørreundersøkelse = SpørreundersøkelseDto(
-                    id = dokumentKafkaDto.innhold.id,
-                    fullførtTidspunkt = dokumentKafkaDto.innhold.fullførtTidspunkt,
-                    innhold = ResultatDto(
-                        id = dokumentKafkaDto.innhold.id,
-                        spørsmålMedSvarPerTema = dokumentKafkaDto.innhold.spørsmålMedSvarPerTema,
-                    ),
-                ),
+                innhold = dokumentKafkaDto.innhold,
             ),
         )
 
@@ -65,8 +59,8 @@ class JournalpostService(
             dokumentId = lagretDokument.dokumentId,
             virksomhetDto = dokumentKafkaDto.virksomhet,
             sakDto = dokumentKafkaDto.sak,
-            journalpostTittel = "Behovsvurdering",
-            dokumentTittel = "Behovsvurdering",
+            journalpostTittel = dokumentKafkaDto.type.tittel(),
+            dokumentTittel = dokumentKafkaDto.type.tittel(),
             pdf = base64EnkodetPdf,
         )
         return journalfør(
@@ -74,25 +68,24 @@ class JournalpostService(
         )
     }
 
-    private fun getAuthorizedHttpClient(scopeForAuthorization: String): HttpClient =
-        client.config {
-            install(Auth) {
-                bearer {
-                    loadTokens {
-                        val exchangedToken = entraIdTokenAuthClient.hentMaskinTilMaskinToken(
-                            scope = scopeForAuthorization,
-                        ).getOrElse { feil ->
-                            log.error("Klarte ikke å hente M2M-token for journalføring: '${feil.feilmelding}'")
-                            throw RuntimeException("Token exchange feil")
-                        }
-                        BearerTokens(
-                            accessToken = exchangedToken.access_token,
-                            refreshToken = exchangedToken.access_token,
-                        )
+    private fun getAuthorizedHttpClient(scopeForAuthorization: String): HttpClient = client.config {
+        install(Auth) {
+            bearer {
+                loadTokens {
+                    val exchangedToken = entraIdTokenAuthClient.hentMaskinTilMaskinToken(
+                        scope = scopeForAuthorization,
+                    ).getOrElse { feil ->
+                        log.error("Klarte ikke å hente M2M-token for journalføring: '${feil.feilmelding}'")
+                        throw RuntimeException("Token exchange feil")
                     }
+                    BearerTokens(
+                        accessToken = exchangedToken.access_token,
+                        refreshToken = exchangedToken.access_token,
+                    )
                 }
             }
         }
+    }
 
     private fun lagJournalpostDto(
         dokumentId: UUID,
@@ -169,3 +162,22 @@ class JournalpostService(
         }
     }
 }
+
+private fun Dokument.Type.tittel(): String = when (this) {
+    Dokument.Type.BEHOVSVURDERING -> "Behovsvurdering"
+    Dokument.Type.SAMARBEIDSPLAN -> "Samarbeidsplan"
+
+    else -> {
+        throw RuntimeException("Ukjent dokumenttype: $this")
+    }
+}
+
+private fun Dokument.Type.tilPdfType(): PdfType = when (this) {
+    Dokument.Type.BEHOVSVURDERING -> PdfType.BEHOVSVURDERING
+    Dokument.Type.SAMARBEIDSPLAN -> PdfType.SAMARBEIDSPLAN
+
+    else -> {
+        throw RuntimeException("Ukjent dokumenttype: $this")
+    }
+}
+

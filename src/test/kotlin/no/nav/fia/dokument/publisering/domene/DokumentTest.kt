@@ -4,8 +4,10 @@ import io.kotest.matchers.collections.shouldBeIn
 import io.kotest.matchers.shouldBe
 import kotlinx.serialization.json.Json
 import no.nav.fia.dokument.publisering.helper.TestContainerHelper
+import no.nav.fia.dokument.publisering.kafka.dto.SamarbeidsplanInnholdIDokumentDto
 import no.nav.fia.dokument.publisering.kafka.dto.SpørreundersøkelseInnholdIDokumentDto
 import org.postgresql.util.PGobject
+import java.util.UUID
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
@@ -15,6 +17,25 @@ class DokumentTest {
         TestContainerHelper.texasSidecarContainer.slettAlleStubs()
         TestContainerHelper.texasSidecarContainer.stubNaisTokenEndepunkt()
         TestContainerHelper.dokarkivContainer.slettAlleJournalposter()
+    }
+
+    @Test
+    fun `skal konsumere og lagre dokumenter av type SAMARBEIDSPLAN`() {
+        val dokumentKafkaDto = TestContainerHelper.kafkaContainer.etVilkårligDokumentTilPublisering(type = Dokument.Type.SAMARBEIDSPLAN)
+        val nøkkel = "${dokumentKafkaDto.samarbeid.id}-${dokumentKafkaDto.referanseId}-${dokumentKafkaDto.type.name}"
+
+        TestContainerHelper.kafkaContainer.sendMeldingPåKafka(
+            nøkkel = nøkkel,
+            melding = Json.encodeToString(dokumentKafkaDto),
+        )
+
+        TestContainerHelper.postgresContainer.hentEnkelKolonne<String>(
+            """
+            SELECT status 
+            FROM dokument 
+            WHERE referanse_id = '${dokumentKafkaDto.referanseId}'
+            """.trimIndent(),
+        ) shouldBeIn Dokument.Status.entries.map { it.name }.toList()
     }
 
     @Test
@@ -37,8 +58,13 @@ class DokumentTest {
     }
 
     @Test
-    fun `innhold lagres som gyldig JSON`() {
-        val dokumentKafkaDto = TestContainerHelper.kafkaContainer.etVilkårligDokumentTilPublisering()
+    fun `innhold lagres som gyldig JSON for BEHOVSVURDERING`() {
+        val referanseId: UUID = UUID.randomUUID()
+        val dokumentKafkaDto = TestContainerHelper.kafkaContainer.etVilkårligDokumentTilPublisering(
+            referanseId = referanseId,
+            orgnr = "987654321",
+            type = Dokument.Type.BEHOVSVURDERING,
+        )
         val nøkkel = "${dokumentKafkaDto.samarbeid.id}-${dokumentKafkaDto.referanseId}-${dokumentKafkaDto.type.name}"
 
         TestContainerHelper.kafkaContainer.sendMeldingPåKafka(
@@ -55,6 +81,33 @@ class DokumentTest {
         )
         val jsonValue: String = innhold.value!!
         val jsonInnhold = Json.decodeFromString<SpørreundersøkelseInnholdIDokumentDto>(jsonValue)
-        jsonInnhold.id shouldBe dokumentKafkaDto.innhold.id
+        jsonInnhold.id shouldBe referanseId.toString()
+    }
+
+    @Test
+    fun `innhold lagres som gyldig JSON for SAMARBEIDSPLAN`() {
+        val referanseId: UUID = UUID.randomUUID()
+        val dokumentKafkaDto = TestContainerHelper.kafkaContainer.etVilkårligDokumentTilPublisering(
+            referanseId = referanseId,
+            orgnr = "987654321",
+            type = Dokument.Type.SAMARBEIDSPLAN,
+        )
+        val nøkkel = "${dokumentKafkaDto.samarbeid.id}-${dokumentKafkaDto.referanseId}-${dokumentKafkaDto.type.name}"
+
+        TestContainerHelper.kafkaContainer.sendMeldingPåKafka(
+            nøkkel = nøkkel,
+            melding = Json.encodeToString(dokumentKafkaDto),
+        )
+
+        val innhold = TestContainerHelper.postgresContainer.hentEnkelKolonne<PGobject>(
+            """
+            SELECT innhold 
+            FROM dokument 
+            WHERE referanse_id = '${dokumentKafkaDto.referanseId}'
+            """.trimIndent(),
+        )
+        val jsonValue: String = innhold.value!!
+        val jsonInnhold = Json.decodeFromString<SamarbeidsplanInnholdIDokumentDto>(jsonValue)
+        jsonInnhold.id shouldBe referanseId.toString()
     }
 }

@@ -7,6 +7,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.time.withTimeout
 import kotlinx.coroutines.time.withTimeoutOrNull
 import kotlinx.datetime.toKotlinLocalDateTime
+import kotlinx.serialization.json.Json
 import no.nav.fia.dokument.publisering.domene.Dokument
 import no.nav.fia.dokument.publisering.kafka.KafkaConfig
 import no.nav.fia.dokument.publisering.kafka.KafkaTopics
@@ -14,6 +15,7 @@ import no.nav.fia.dokument.publisering.kafka.dto.DokumentKafkaDto
 import no.nav.fia.dokument.publisering.kafka.dto.NavEnhet
 import no.nav.fia.dokument.publisering.kafka.dto.SakDto
 import no.nav.fia.dokument.publisering.kafka.dto.SamarbeidDto
+import no.nav.fia.dokument.publisering.kafka.dto.SamarbeidsplanInnholdIDokumentDto
 import no.nav.fia.dokument.publisering.kafka.dto.SpørreundersøkelseInnholdIDokumentDto
 import no.nav.fia.dokument.publisering.kafka.dto.VirksomhetDto
 import org.apache.kafka.clients.CommonClientConfigs
@@ -182,6 +184,29 @@ class KafkaContainer(
         orgnr: String = "987654321",
     ): DokumentKafkaDto {
         val navIdent = "NavIdent"
+        val innhold = when(type) {
+            Dokument.Type.BEHOVSVURDERING ->
+            Json.encodeToString(
+                serializer = SpørreundersøkelseInnholdIDokumentDto.serializer(),
+                value = SpørreundersøkelseInnholdIDokumentDto(
+                    id = referanseId.toString(),
+                    fullførtTidspunkt = now().toKotlinLocalDateTime(),
+                    spørsmålMedSvarPerTema = emptyList(),
+                )
+            )
+            Dokument.Type.SAMARBEIDSPLAN ->
+                Json.encodeToString(
+                    serializer = SamarbeidsplanInnholdIDokumentDto.serializer(),
+                    value = SamarbeidsplanInnholdIDokumentDto(
+                        id = referanseId.toString(),
+                        sistEndret = now().toKotlinLocalDateTime(),
+                        sistPublisert = null,
+                        status = "AKTIV",
+                        temaer = emptyList(),
+                    )
+                )
+            else -> throw RuntimeException("Ikke implementert for dokumenttype $type")
+        }
         return DokumentKafkaDto(
             sak = SakDto(
                 saksnummer = "01HPGQR1626B531V7BXEQK172M",
@@ -201,11 +226,7 @@ class KafkaContainer(
             referanseId = referanseId.toString(),
             type = type,
             dokumentOpprettetAv = navIdent,
-            innhold = SpørreundersøkelseInnholdIDokumentDto(
-                id = referanseId.toString(),
-                fullførtTidspunkt = now().toKotlinLocalDateTime(),
-                spørsmålMedSvarPerTema = emptyList(),
-            ),
+            innhold = Json.decodeFromString(innhold),
         )
     }
 }
