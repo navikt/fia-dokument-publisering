@@ -1,18 +1,25 @@
 package no.nav.fia.dokument.publisering.kafka.dto
 
-import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonObject
 import no.nav.fia.dokument.publisering.domene.Dokument
 
+/*
+  Matcher med DokumentPubliseringMedInnhold i Lydia-api
+ */
 @Serializable
 data class DokumentKafkaDto(
-    val sak: SakDto,
+    val type: Dokument.Type,
     val virksomhet: VirksomhetDto,
+    val sak: SakDto,
     val samarbeid: SamarbeidDto,
     val referanseId: String,
-    val type: Dokument.Type,
     val dokumentOpprettetAv: String,
-    val innhold: SpørreundersøkelseInnholdIDokumentDto,
+    /* Json objekt 'innhold' skal være av to typer:
+       - SamarbeidsplanInnholdIDokumentDto -> Samarbeidsplan
+       - SpørreundersøkelseInnholdIDokumentDto -> Behovsvurdering (og senere Evaluering)
+     */
+    val innhold: JsonObject,
 )
 
 @Serializable
@@ -37,35 +44,4 @@ data class NavEnhet(
 data class SamarbeidDto(
     val id: Int,
     val navn: String,
-)
-
-@Serializable
-data class SpørreundersøkelseInnholdIDokumentDto(
-    val id: String,
-    val fullførtTidspunkt: LocalDateTime,
-    val spørsmålMedSvarPerTema: List<TemaResultatDto>,
-)
-
-@Serializable
-data class TemaResultatDto(
-    val id: Int,
-    val navn: String,
-    val spørsmålMedSvar: List<SpørsmålResultatDto>,
-)
-
-@Serializable
-data class SpørsmålResultatDto(
-    val id: String,
-    val tekst: String,
-    val flervalg: Boolean,
-    val antallDeltakereSomHarSvart: Int,
-    val svarListe: List<SvarResultatDto>,
-    val kategori: String,
-)
-
-@Serializable
-data class SvarResultatDto(
-    val id: String,
-    val tekst: String,
-    val antallSvar: Int,
 )

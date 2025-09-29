@@ -2,6 +2,8 @@ package no.nav.fia.dokument.publisering.pdfgen
 
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.LocalDateTime
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 import no.nav.fia.dokument.publisering.helper.TestContainerHelper.Companion.pdfgenContainer
 import no.nav.fia.dokument.publisering.kafka.dto.NavEnhet
 import no.nav.fia.dokument.publisering.kafka.dto.SakDto
@@ -24,9 +26,22 @@ class PdfgenContainerTest {
 
     @Test
     fun `valider at genererte pdfer er i pdf-a format`() {
+        val referanseId = "2e84469f-5224-4d85-9f8b-43965502df32"
+
+        assertGenerertPdfErValid(referanseId, getInnholdForBehovsvurdering(referanseId), PdfType.BEHOVSVURDERING)
+        assertGenerertPdfErValid(referanseId, getInnholdForSamarbeidsplan(referanseId), PdfType.SAMARBEIDSPLAN)
+    }
+
+    private fun assertGenerertPdfErValid(
+        referanseId: String,
+        innholdTilDokument: String,
+        pdfType: PdfType,
+    ) {
         runBlocking {
             val pdf = pdfgenContainer.hentDokumentPdf(
                 dokument = PdfDokumentDto(
+                    type = pdfType,
+                    referanseId = referanseId,
                     publiseringsdato = LocalDateTime.parse("2025-07-02T10:52:03"),
                     sak = SakDto(
                         saksnummer = "01HXXPFZFNRKD41JWHAY321BEZ",
@@ -43,42 +58,8 @@ class PdfgenContainerTest {
                         id = 12345,
                         navn = "Samarbeid Navn",
                     ),
-                    spørreundersøkelse = SpørreundersøkelseDto(
-                        id = "2e84469f-5224-4d85-9f8b-43965502df32",
-                        fullførtTidspunkt = LocalDateTime.parse("2025-07-01T15:44:11"),
-                        innhold = ResultatDto(
-                            id = "2e84469f-5224-4d85-9f8b-43965502df32",
-                            spørsmålMedSvarPerTema = listOf(
-                                TemaResultatDto(
-                                    id = 19,
-                                    navn = "Partssamarbeid",
-                                    spørsmålMedSvar = listOf(
-                                        SpørsmålResultatDto(
-                                            id = "2e84469f-5224-4d85-9f8b-43965502df32",
-                                            tekst = "Hvordan opplever du samarbeidet med NAV?",
-                                            flervalg = false,
-                                            antallDeltakereSomHarSvart = 10,
-                                            svarListe = listOf(
-                                                "Veldig bra",
-                                                "Bra",
-                                                "Nøytral",
-                                                "Dårlig",
-                                                "Veldig dårlig",
-                                            ).map { svar ->
-                                                SvarResultatDto(
-                                                    id = "${UUID.randomUUID()}",
-                                                    tekst = svar,
-                                                    antallSvar = 2,
-                                                )
-                                            },
-                                            kategori = "Generelt",
-                                        ),
-                                    ),
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
+                    innhold = Json.decodeFromString(innholdTilDokument),
+                )
             )
             val pdfaFlavour = PDFAFlavour.PDFA_2_U
             val validator = Foundries.defaultInstance().createValidator(pdfaFlavour, false)
@@ -87,4 +68,83 @@ class PdfgenContainerTest {
             }
         }
     }
+
+    fun getInnholdForBehovsvurdering(referanseId: String): String = Json.encodeToString(
+        serializer = SpørreundersøkelseInnholdTilPdfGenDto.serializer(),
+        value = SpørreundersøkelseInnholdTilPdfGenDto(
+            id = referanseId,
+            fullførtTidspunkt = LocalDateTime.parse("2025-07-01T15:44:11"),
+            spørsmålMedSvarPerTema = listOf(
+                TemaResultatDto(
+                    id = 19,
+                    navn = "Partssamarbeid",
+                    spørsmålMedSvar = listOf(
+                        SpørsmålResultatDto(
+                            id = "2e84469f-5224-4d85-9f8b-43965502df32",
+                            tekst = "Hvordan opplever du samarbeidet med NAV?",
+                            flervalg = false,
+                            antallDeltakereSomHarSvart = 10,
+                            svarListe = listOf(
+                                "Veldig bra",
+                                "Bra",
+                                "Nøytral",
+                                "Dårlig",
+                                "Veldig dårlig",
+                            ).map { svar ->
+                                SvarResultatDto(
+                                    id = "${UUID.randomUUID()}",
+                                    tekst = svar,
+                                    antallSvar = 2,
+                                )
+                            },
+                            kategori = "Generelt",
+                        ),
+                    ),
+                ),
+            ),
+        ),
+    )
+
+    fun getInnholdForSamarbeidsplan(referanseId: String): String = Json.encodeToString(
+        serializer = SpørreundersøkelseInnholdTilPdfGenDto.serializer(),
+        value = SpørreundersøkelseInnholdTilPdfGenDto(
+            id = referanseId,
+            fullførtTidspunkt = LocalDateTime.parse("2025-07-01T15:44:11"),
+            spørsmålMedSvarPerTema = listOf(
+                TemaResultatDto(
+                    id = 19,
+                    navn = "Partssamarbeid",
+                    spørsmålMedSvar = listOf(
+                        SpørsmålResultatDto(
+                            id = "2e84469f-5224-4d85-9f8b-43965502df32",
+                            tekst = "Hvordan opplever du samarbeidet med NAV?",
+                            flervalg = false,
+                            antallDeltakereSomHarSvart = 10,
+                            svarListe = listOf(
+                                "Veldig bra",
+                                "Bra",
+                                "Nøytral",
+                                "Dårlig",
+                                "Veldig dårlig",
+                            ).map { svar ->
+                                SvarResultatDto(
+                                    id = "${UUID.randomUUID()}",
+                                    tekst = svar,
+                                    antallSvar = 2,
+                                )
+                            },
+                            kategori = "Generelt",
+                        ),
+                    ),
+                ),
+            ),
+        ),
+    )
+
+    @Serializable
+    data class SpørreundersøkelseInnholdTilPdfGenDto(
+        val id: String,
+        val fullførtTidspunkt: LocalDateTime,
+        val spørsmålMedSvarPerTema: List<TemaResultatDto>,
+    )
 }

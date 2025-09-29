@@ -21,11 +21,11 @@ class PiaPdfgenService {
 
     private fun getHttpClient(): HttpClient = client.config {}
 
-    suspend fun genererBase64DokumentPdf(spørreundersøkelsePdfDokumentDto: PdfDokumentDto): String =
+    suspend fun genererBase64DokumentPdf(pdfDokumentDto: PdfDokumentDto): String =
         when (NaisEnvironment.cluster) {
             Cluster.`prod-gcp`, Cluster.`dev-gcp` -> genererPdfDokument(
-                pdfType = PdfType.BEHOVSVURDERING,
-                json = Json.encodeToString<PdfDokumentDto>(spørreundersøkelsePdfDokumentDto),
+                pdfType = pdfDokumentDto.type,
+                json = Json.encodeToString<PdfDokumentDto>(pdfDokumentDto),
             ).tilBase64()
             else -> ""
         }
@@ -36,7 +36,7 @@ class PiaPdfgenService {
     ): ByteArray {
         val httpClient = getHttpClient()
         val response: HttpResponse = httpClient.post {
-            url("$piaPdfgenUrl/api/v1/genpdf/pia/${pdfType.type}")
+            url("$piaPdfgenUrl/api/v1/genpdf/pia/${pdfType.pathIPiaPdfgen}")
             contentType(ContentType.Application.Json)
             accept(ContentType.Application.Json)
             setBody(json)

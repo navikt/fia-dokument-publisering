@@ -12,7 +12,6 @@ import no.nav.fia.dokument.publisering.journalpost.JournalpostService
 import no.nav.fia.dokument.publisering.kafka.KvitteringDto
 import no.nav.fia.dokument.publisering.kafka.KvitteringProdusent
 import no.nav.fia.dokument.publisering.kafka.dto.DokumentKafkaDto
-import no.nav.fia.dokument.publisering.kafka.dto.SpørreundersøkelseInnholdIDokumentDto
 import org.slf4j.LoggerFactory
 import java.time.LocalDateTime.now
 import java.util.UUID
@@ -108,7 +107,7 @@ fun DokumentKafkaDto.tilDomene(): Dokument =
         saksnummer = sak.saksnummer,
         samarbeidId = samarbeid.id,
         samarbeidNavn = samarbeid.navn,
-        innhold = Json.encodeToString(serializer = SpørreundersøkelseInnholdIDokumentDto.serializer(), value = innhold),
+        innhold = innhold,
         sendtTilPublisering = now().toKotlinLocalDateTime(),
         opprettet = now().toKotlinLocalDateTime(),
         publisert = null,

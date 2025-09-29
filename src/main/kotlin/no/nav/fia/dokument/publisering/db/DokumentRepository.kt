@@ -3,6 +3,7 @@ package no.nav.fia.dokument.publisering.db
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.toJavaLocalDateTime
 import kotlinx.datetime.toKotlinLocalDateTime
+import kotlinx.serialization.json.Json
 import kotliquery.Row
 import kotliquery.queryOf
 import kotliquery.sessionOf
@@ -59,7 +60,7 @@ class DokumentRepository(
                         "saksnummer" to dokument.saksnummer,
                         "samarbeidId" to dokument.samarbeidId,
                         "samarbeidNavn" to dokument.samarbeidNavn,
-                        "innhold" to dokument.innhold,
+                        "innhold" to dokument.innhold.toString(),
                         "sendtTilPublisering" to dokument.sendtTilPublisering.toJavaLocalDateTime(),
                     ),
                 ).asUpdate,
@@ -125,7 +126,7 @@ class DokumentRepository(
             saksnummer = this.string("saksnummer"),
             samarbeidId = this.int("samarbeid_id"),
             samarbeidNavn = this.string("samarbeid_navn"),
-            innhold = this.string("innhold"),
+            innhold = Json.decodeFromString(this.string("innhold")),
             sendtTilPublisering = this.localDateTime("sendt_til_publisering").toKotlinLocalDateTime(),
             opprettet = this.localDateTime("opprettet").toKotlinLocalDateTime(),
             publisert = this.localDateTimeOrNull("publisert")?.toKotlinLocalDateTime(),

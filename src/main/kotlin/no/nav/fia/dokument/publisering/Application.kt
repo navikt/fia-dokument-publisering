@@ -118,8 +118,7 @@ private fun settOppKonsumenter(
         kafkaConfig = KafkaConfig(),
         kafkaTopic = KafkaTopics.DOKUMENT_PUBLISERING,
         applikasjonsHelse = applikasjonsHelse,
-    ) {
-        dokumentService.håndterKafkaMelding(it)
-    }
+        prosessFunksjon = { melding -> dokumentService.håndterKafkaMelding(melding) }
+    )
     dokumentKonsument.startKonsument()
 }
