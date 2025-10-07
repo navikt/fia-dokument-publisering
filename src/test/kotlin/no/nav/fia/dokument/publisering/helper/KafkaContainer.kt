@@ -15,8 +15,8 @@ import no.nav.fia.dokument.publisering.kafka.dto.DokumentKafkaDto
 import no.nav.fia.dokument.publisering.kafka.dto.NavEnhet
 import no.nav.fia.dokument.publisering.kafka.dto.SakDto
 import no.nav.fia.dokument.publisering.kafka.dto.SamarbeidDto
-import no.nav.fia.dokument.publisering.kafka.dto.SamarbeidsplanInnholdIDokumentDto
-import no.nav.fia.dokument.publisering.kafka.dto.SpørreundersøkelseInnholdIDokumentDto
+import no.nav.fia.dokument.publisering.domene.SamarbeidsplanInnholdIDokumentDto
+import no.nav.fia.dokument.publisering.domene.SpørreundersøkelseInnholdIDokumentDto
 import no.nav.fia.dokument.publisering.kafka.dto.VirksomhetDto
 import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.admin.AdminClient

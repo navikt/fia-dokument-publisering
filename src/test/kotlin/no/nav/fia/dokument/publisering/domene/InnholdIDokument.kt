@@ -1,4 +1,4 @@
-package no.nav.fia.dokument.publisering.kafka.dto
+package no.nav.fia.dokument.publisering.domene
 
 import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.Serializable

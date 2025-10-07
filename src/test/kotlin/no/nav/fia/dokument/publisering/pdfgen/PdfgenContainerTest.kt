@@ -8,9 +8,9 @@ import no.nav.fia.dokument.publisering.helper.TestContainerHelper.Companion.pdfg
 import no.nav.fia.dokument.publisering.kafka.dto.NavEnhet
 import no.nav.fia.dokument.publisering.kafka.dto.SakDto
 import no.nav.fia.dokument.publisering.kafka.dto.SamarbeidDto
-import no.nav.fia.dokument.publisering.kafka.dto.SpørsmålResultatDto
-import no.nav.fia.dokument.publisering.kafka.dto.SvarResultatDto
-import no.nav.fia.dokument.publisering.kafka.dto.TemaResultatDto
+import no.nav.fia.dokument.publisering.domene.SpørsmålResultatDto
+import no.nav.fia.dokument.publisering.domene.SvarResultatDto
+import no.nav.fia.dokument.publisering.domene.TemaResultatDto
 import no.nav.fia.dokument.publisering.kafka.dto.VirksomhetDto
 import org.verapdf.gf.foundry.VeraGreenfieldFoundryProvider
 import org.verapdf.pdfa.Foundries
