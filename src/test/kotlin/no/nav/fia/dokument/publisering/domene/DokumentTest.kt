@@ -4,8 +4,6 @@ import io.kotest.matchers.collections.shouldBeIn
 import io.kotest.matchers.shouldBe
 import kotlinx.serialization.json.Json
 import no.nav.fia.dokument.publisering.helper.TestContainerHelper
-import no.nav.fia.dokument.publisering.kafka.dto.SamarbeidsplanInnholdIDokumentDto
-import no.nav.fia.dokument.publisering.kafka.dto.SpørreundersøkelseInnholdIDokumentDto
 import org.postgresql.util.PGobject
 import java.util.UUID
 import kotlin.test.BeforeTest
