@@ -23,7 +23,7 @@ class PdfgenContainerHelper(
     private val baseUrl = "http://$networkAlias:$port"
 
     // TODO: bruk en fullverdi release etter pia-pdfgen er merget
-    val container: GenericContainer<*> = GenericContainer(DockerImageName.parse("ghcr.io/navikt/pia-pdfgen:v1.2.0"))
+    val container: GenericContainer<*> = GenericContainer(DockerImageName.parse("ghcr.io/navikt/pia-pdfgen:v1.3.0"))
         .withNetwork(network)
         .withExposedPorts(port)
         .withNetworkAliases(networkAlias)
@@ -57,13 +57,12 @@ class PdfgenContainerHelper(
         pdfType: PdfType,
         json: String,
     ): ByteArray {
-
         val response = container.performPost(
             url = "/api/v1/genpdf/pia/${pdfType.pathIPiaPdfgen}",
             body = json,
             config = {
                 header(HttpHeaders.ContentType, "application/json")
-            }
+            },
         )
         return response.readRawBytes()
     }

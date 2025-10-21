@@ -5,4 +5,5 @@ enum class PdfType(
 ) {
     BEHOVSVURDERING(pathIPiaPdfgen = "behovsvurdering"),
     SAMARBEIDSPLAN(pathIPiaPdfgen = "samarbeidsplan"),
+    EVALUERING(pathIPiaPdfgen = "evaluering"),
 }

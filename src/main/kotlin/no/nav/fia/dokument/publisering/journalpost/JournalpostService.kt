@@ -68,24 +68,25 @@ class JournalpostService(
         )
     }
 
-    private fun getAuthorizedHttpClient(scopeForAuthorization: String): HttpClient = client.config {
-        install(Auth) {
-            bearer {
-                loadTokens {
-                    val exchangedToken = entraIdTokenAuthClient.hentMaskinTilMaskinToken(
-                        scope = scopeForAuthorization,
-                    ).getOrElse { feil ->
-                        log.error("Klarte ikke å hente M2M-token for journalføring: '${feil.feilmelding}'")
-                        throw RuntimeException("Token exchange feil")
+    private fun getAuthorizedHttpClient(scopeForAuthorization: String): HttpClient =
+        client.config {
+            install(Auth) {
+                bearer {
+                    loadTokens {
+                        val exchangedToken = entraIdTokenAuthClient.hentMaskinTilMaskinToken(
+                            scope = scopeForAuthorization,
+                        ).getOrElse { feil ->
+                            log.error("Klarte ikke å hente M2M-token for journalføring: '${feil.feilmelding}'")
+                            throw RuntimeException("Token exchange feil")
+                        }
+                        BearerTokens(
+                            accessToken = exchangedToken.access_token,
+                            refreshToken = exchangedToken.access_token,
+                        )
                     }
-                    BearerTokens(
-                        accessToken = exchangedToken.access_token,
-                        refreshToken = exchangedToken.access_token,
-                    )
                 }
             }
         }
-    }
 
     private fun lagJournalpostDto(
         dokumentId: UUID,
@@ -163,21 +164,24 @@ class JournalpostService(
     }
 }
 
-private fun Dokument.Type.tittel(): String = when (this) {
-    Dokument.Type.BEHOVSVURDERING -> "Behovsvurdering"
-    Dokument.Type.SAMARBEIDSPLAN -> "Samarbeidsplan"
+private fun Dokument.Type.tittel(): String =
+    when (this) {
+        Dokument.Type.BEHOVSVURDERING -> "Behovsvurdering"
+        Dokument.Type.SAMARBEIDSPLAN -> "Samarbeidsplan"
+        Dokument.Type.EVALUERING -> "Evaluering"
 
-    else -> {
-        throw RuntimeException("Ukjent dokumenttype: $this")
+        else -> {
+            throw RuntimeException("Ukjent dokumenttype: $this")
+        }
     }
-}
 
-private fun Dokument.Type.tilPdfType(): PdfType = when (this) {
-    Dokument.Type.BEHOVSVURDERING -> PdfType.BEHOVSVURDERING
-    Dokument.Type.SAMARBEIDSPLAN -> PdfType.SAMARBEIDSPLAN
+private fun Dokument.Type.tilPdfType(): PdfType =
+    when (this) {
+        Dokument.Type.BEHOVSVURDERING -> PdfType.BEHOVSVURDERING
+        Dokument.Type.SAMARBEIDSPLAN -> PdfType.SAMARBEIDSPLAN
+        Dokument.Type.EVALUERING -> PdfType.EVALUERING
 
-    else -> {
-        throw RuntimeException("Ukjent dokumenttype: $this")
+        else -> {
+            throw RuntimeException("Ukjent dokumenttype: $this")
+        }
     }
-}
-
