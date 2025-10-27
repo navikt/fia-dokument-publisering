@@ -1,6 +1,6 @@
 plugins {
-    kotlin("jvm") version "2.2.20"
-    kotlin("plugin.serialization") version "2.2.20"
+    kotlin("jvm") version "2.2.21"
+    kotlin("plugin.serialization") version "2.2.21"
     id("com.gradleup.shadow") version "8.3.5"
 }
 
@@ -11,13 +11,13 @@ repositories {
     maven(url = "https://jitpack.io")
 }
 
-val kotestVersion = "6.0.3"
-val kotlinVersion = "2.2.20"
-val ktorVersion = "3.3.0"
-val logbackVersion = "1.5.18"
-val logstashLogbackEncoderVersion = "8.1"
+val kotestVersion = "6.0.4"
+val kotlinVersion = "2.2.21"
+val ktorVersion = "3.3.1"
+val logbackVersion = "1.5.20"
+val logstashLogbackEncoderVersion = "9.0"
 val mockServerVersion = "1.1.3"
-val postgresqlVersion = "42.7.7"
+val postgresqlVersion = "42.7.8"
 val testcontainersVersion = "1.21.3"
 
 dependencies {
@@ -43,7 +43,7 @@ dependencies {
     // -- DB
     implementation("org.postgresql:postgresql:$postgresqlVersion")
     implementation("com.zaxxer:HikariCP:7.0.2")
-    implementation("org.flywaydb:flyway-database-postgresql:11.12.0")
+    implementation("org.flywaydb:flyway-database-postgresql:11.15.0")
     implementation("com.github.seratch:kotliquery:1.9.1")
 
     // -- div
@@ -63,7 +63,7 @@ dependencies {
     testImplementation("org.testcontainers:kafka:$testcontainersVersion")
     testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
     // Mock-oauth2-server
-    testImplementation("no.nav.security:mock-oauth2-server:2.3.0")
+    testImplementation("no.nav.security:mock-oauth2-server:3.0.0")
     // Mockserver neolight
     testImplementation("software.xdev.mockserver:testcontainers:$mockServerVersion")
     testImplementation("software.xdev.mockserver:client:$mockServerVersion")
@@ -75,7 +75,7 @@ dependencies {
     constraints {
         implementation("io.netty:netty-codec-http2") {
             version {
-                require("4.2.6.Final")
+                require("4.2.7.Final")
             }
             because(
                 "ktor-server-netty har sårbar versjon",
