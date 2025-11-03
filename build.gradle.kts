@@ -18,7 +18,7 @@ val logbackVersion = "1.5.20"
 val logstashLogbackEncoderVersion = "9.0"
 val mockServerVersion = "1.1.3"
 val postgresqlVersion = "42.7.8"
-val testcontainersVersion = "1.21.3"
+val testcontainersVersion = "2.0.1"
 
 dependencies {
     // -- ktor
@@ -32,9 +32,6 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-content-negotiation-jvm:$ktorVersion")
     implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
-
-    // Funksjonelle operatorer
-    implementation("io.arrow-kt:arrow-core:2.1.2")
 
     // -- logs
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
@@ -54,13 +51,13 @@ dependencies {
     implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
 
     // Funksjonelle operatorer
-    implementation("io.arrow-kt:arrow-core:2.1.2")
+    implementation("io.arrow-kt:arrow-core:2.2.0")
 
     // ----------- test
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
     testImplementation("org.testcontainers:testcontainers:$testcontainersVersion")
-    testImplementation("org.testcontainers:postgresql:$testcontainersVersion")
-    testImplementation("org.testcontainers:kafka:$testcontainersVersion")
+    testImplementation("org.testcontainers:testcontainers-postgresql:$testcontainersVersion")
+    testImplementation("org.testcontainers:testcontainers-kafka:$testcontainersVersion")
     testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
     // Mock-oauth2-server
     testImplementation("no.nav.security:mock-oauth2-server:3.0.0")
