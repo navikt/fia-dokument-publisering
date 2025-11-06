@@ -1,7 +1,7 @@
 plugins {
     kotlin("jvm") version "2.2.21"
     kotlin("plugin.serialization") version "2.2.21"
-    id("com.gradleup.shadow") version "8.3.5"
+    id("application")
 }
 
 group = "no.nav"
@@ -94,13 +94,7 @@ dependencies {
 }
 
 tasks {
-    shadowJar {
-        mergeServiceFiles()
-        manifest {
-            attributes("Main-Class" to "no.nav.fia.dokument.publisering.ApplicationKt")
-        }
-    }
     test {
-        dependsOn(shadowJar)
+        dependsOn(installDist)
     }
 }

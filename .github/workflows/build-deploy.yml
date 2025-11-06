@@ -24,7 +24,7 @@ jobs:
         with:
           dependency-graph: generate-and-submit
       - name: Build and test
-        run: ./gradlew build
+        run: ./gradlew test installDist
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
         with:
