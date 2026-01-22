@@ -13,12 +13,12 @@ repositories {
 
 val kotestVersion = "6.0.4"
 val kotlinVersion = "2.2.21"
-val ktorVersion = "3.3.1"
-val logbackVersion = "1.5.20"
+val ktorVersion = "3.3.3"
+val logbackVersion = "1.5.24"
 val logstashLogbackEncoderVersion = "9.0"
 val mockServerVersion = "1.1.3"
-val postgresqlVersion = "42.7.8"
-val testcontainersVersion = "2.0.1"
+val postgresqlVersion = "42.7.9"
+val testcontainersVersion = "2.0.3"
 
 dependencies {
     // -- ktor
@@ -40,15 +40,15 @@ dependencies {
     // -- DB
     implementation("org.postgresql:postgresql:$postgresqlVersion")
     implementation("com.zaxxer:HikariCP:7.0.2")
-    implementation("org.flywaydb:flyway-database-postgresql:11.15.0")
+    implementation("org.flywaydb:flyway-database-postgresql:11.20.2")
     implementation("com.github.seratch:kotliquery:1.9.1")
 
     // -- div
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
 
     // Kafka
-    implementation("at.yawk.lz4:lz4-java:1.10.1")
-    implementation("org.apache.kafka:kafka-clients:4.1.0") {
+    implementation("at.yawk.lz4:lz4-java:1.10.2")
+    implementation("org.apache.kafka:kafka-clients:4.1.1") {
         // "Fikser CVE-2025-12183 - lz4-java >1.8.1 har sårbar versjon (transitive dependency fra kafka-clients:4.1.0)"
         exclude("org.lz4", "lz4-java")
     }
@@ -66,19 +66,27 @@ dependencies {
     testImplementation("org.testcontainers:testcontainers-kafka:$testcontainersVersion")
     testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
     // Mock-oauth2-server
-    testImplementation("no.nav.security:mock-oauth2-server:3.0.0")
+    testImplementation("no.nav.security:mock-oauth2-server:3.0.1")
     // Mockserver neolight
     testImplementation("software.xdev.mockserver:testcontainers:$mockServerVersion")
     testImplementation("software.xdev.mockserver:client:$mockServerVersion")
     // JWT utilities
-    testImplementation("com.nimbusds:nimbus-jose-jwt:10.5")
+    testImplementation("com.nimbusds:nimbus-jose-jwt:10.7")
     // -- validere pdfa
     testImplementation("org.verapdf:validation-model:1.28.2")
 
     constraints {
+        implementation("org.mozilla:rhino") {
+            version {
+                require("1.8.1")
+            }
+            because(
+                "versjonser < 1.8.1 har sårbarhet. inkludert i verapdf 1.28.2",
+            )
+        }
         implementation("io.netty:netty-codec-http2") {
             version {
-                require("4.2.7.Final")
+                require("4.2.9.Final")
             }
             because(
                 "ktor-server-netty har sårbar versjon",
@@ -92,7 +100,7 @@ dependencies {
         }
         testImplementation("commons-io:commons-io") {
             version {
-                require("2.20.0")
+                require("2.21.0")
             }
             because("testcontainers har sårbar versjon")
         }
