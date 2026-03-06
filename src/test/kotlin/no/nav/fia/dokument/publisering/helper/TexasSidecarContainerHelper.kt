@@ -132,7 +132,7 @@ class TexasSidecarContainerHelper(
                         "token_type": "Bearer"
                     }
                     """.trimIndent(),
-                ).withContentType(MediaType.APPLICATION_JSON_UTF_8),
+                ).withContentType(MediaType.APPLICATION_JSON),
             )
         }
     }
