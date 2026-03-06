@@ -1,10 +1,5 @@
 package no.nav.fia.dokument.publisering.helper
 
-import kotlin.also
-import kotlin.apply
-import kotlin.jvm.java
-import kotlin.text.trimIndent
-import kotlin.to
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
@@ -25,6 +20,11 @@ import software.xdev.mockserver.model.MediaType
 import software.xdev.mockserver.model.RequestDefinition
 import software.xdev.testcontainers.mockserver.containers.MockServerContainer
 import software.xdev.testcontainers.mockserver.containers.MockServerContainer.PORT
+import kotlin.also
+import kotlin.apply
+import kotlin.jvm.java
+import kotlin.text.trimIndent
+import kotlin.to
 
 class DokarkivContainerHelper(
     network: Network = Network.newNetwork(),
@@ -65,7 +65,6 @@ class DokarkivContainerHelper(
     fun slettAlleJournalposter() {
         slettAlleExpectations()
     }
-
 
     private fun getMockServerClient(): MockServerClient {
         if (mockServerClient == null) {
@@ -117,22 +116,22 @@ class DokarkivContainerHelper(
                 request()
                     .withMethod("POST")
                     .withPath("/rest/journalpostapi/v1/journalpost")
-                    .withQueryStringParameter("forsoekFerdigstill", "true")
+                    .withQueryStringParameter("forsoekFerdigstill", "true"),
             ).respond(
                 response().withBody(
                     """
+                    {
+                      "dokumenter": [
                         {
-                          "dokumenter": [
-                            {
-                              "dokumentInfoId": "${journalpostDto.eksternReferanseId}"
-                            }
-                          ],
-                          "journalpostId": "$forventetJournalpostId",
-                          "journalpostferdigstilt": true,
-                          "melding": "OK"
+                          "dokumentInfoId": "${journalpostDto.eksternReferanseId}"
                         }
+                      ],
+                      "journalpostId": "$forventetJournalpostId",
+                      "journalpostferdigstilt": true,
+                      "melding": "OK"
+                    }
                     """.trimIndent(),
-                ).withContentType(MediaType.APPLICATION_JSON_UTF_8),
+                ).withContentType(MediaType.APPLICATION_JSON),
             )
         }
         return forventetJournalpostId
