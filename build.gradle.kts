@@ -11,12 +11,12 @@ repositories {
     maven(url = "https://jitpack.io")
 }
 
-val kotestVersion = "6.1.4"
+val kotestVersion = "6.1.5"
 val kotlinVersion = "2.3.10"
 val ktorVersion = "3.4.0"
 val logbackVersion = "1.5.32"
 val logstashLogbackEncoderVersion = "9.0"
-val mockServerVersion = "2.0.2"
+val mockServerVersion = "2.0.3"
 val postgresqlVersion = "42.7.10"
 val testcontainersVersion = "2.0.3"
 
@@ -47,7 +47,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
 
     // Kafka
-    implementation("at.yawk.lz4:lz4-java:1.10.3")
+    implementation("at.yawk.lz4:lz4-java:1.10.4")
     implementation("org.apache.kafka:kafka-clients:4.2.0") {
         // "Fikser CVE-2025-12183 - lz4-java >1.8.1 har sårbar versjon (transitive dependency fra kafka-clients:4.1.0)"
         exclude("org.lz4", "lz4-java")
@@ -57,7 +57,7 @@ dependencies {
     implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
 
     // Funksjonelle operatorer
-    implementation("io.arrow-kt:arrow-core:2.2.1.1")
+    implementation("io.arrow-kt:arrow-core:2.2.2")
 
     // ----------- test
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
