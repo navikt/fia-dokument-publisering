@@ -1,6 +1,6 @@
 plugins {
-    kotlin("jvm") version "2.3.10"
-    kotlin("plugin.serialization") version "2.3.10"
+    kotlin("jvm") version "2.3.20"
+    kotlin("plugin.serialization") version "2.3.20"
     id("application")
 }
 
@@ -11,14 +11,14 @@ repositories {
     maven(url = "https://jitpack.io")
 }
 
-val kotestVersion = "6.1.7"
-val kotlinVersion = "2.3.10"
-val ktorVersion = "3.4.1"
+val kotestVersion = "6.1.11"
+val kotlinVersion = "2.3.20"
+val ktorVersion = "3.4.2"
 val logbackVersion = "1.5.32"
 val logstashLogbackEncoderVersion = "9.0"
-val mockServerVersion = "2.0.3"
+val mockServerVersion = "2.50.5"
 val postgresqlVersion = "42.7.10"
-val testcontainersVersion = "2.0.3"
+val testcontainersVersion = "2.0.4"
 
 dependencies {
     // -- ktor
@@ -40,14 +40,14 @@ dependencies {
     // -- DB
     implementation("org.postgresql:postgresql:$postgresqlVersion")
     implementation("com.zaxxer:HikariCP:7.0.2")
-    implementation("org.flywaydb:flyway-database-postgresql:12.1.0")
+    implementation("org.flywaydb:flyway-database-postgresql:12.3.0")
     implementation("com.github.seratch:kotliquery:1.9.1")
 
     // -- div
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
 
     // Kafka
-    implementation("at.yawk.lz4:lz4-java:1.10.4")
+    implementation("at.yawk.lz4:lz4-java:1.11.0")
     implementation("org.apache.kafka:kafka-clients:4.2.0") {
         // "Fikser CVE-2025-12183 - lz4-java >1.8.1 har sårbar versjon (transitive dependency fra kafka-clients:4.1.0)"
         exclude("org.lz4", "lz4-java")
@@ -57,7 +57,7 @@ dependencies {
     implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
 
     // Funksjonelle operatorer
-    implementation("io.arrow-kt:arrow-core:2.2.2")
+    implementation("io.arrow-kt:arrow-core:2.2.2.1")
 
     // ----------- test
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
@@ -71,7 +71,7 @@ dependencies {
     testImplementation("software.xdev.mockserver:testcontainers:$mockServerVersion")
     testImplementation("software.xdev.mockserver:client:$mockServerVersion")
     // JWT utilities
-    testImplementation("com.nimbusds:nimbus-jose-jwt:10.8")
+    testImplementation("com.nimbusds:nimbus-jose-jwt:10.9")
     // -- validere pdfa
     testImplementation("org.verapdf:validation-model:1.28.2")
 
