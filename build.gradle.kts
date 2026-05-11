@@ -17,7 +17,7 @@ val ktorVersion = "3.4.3"
 val logbackVersion = "1.5.32"
 val logstashLogbackEncoderVersion = "9.0"
 val mockServerVersion = "2.50.6"
-val postgresqlVersion = "42.7.10"
+val postgresqlVersion = "42.7.11"
 val testcontainersVersion = "2.0.5"
 
 dependencies {
@@ -40,7 +40,7 @@ dependencies {
     // -- DB
     implementation("org.postgresql:postgresql:$postgresqlVersion")
     implementation("com.zaxxer:HikariCP:7.0.2")
-    implementation("org.flywaydb:flyway-database-postgresql:12.4.0")
+    implementation("org.flywaydb:flyway-database-postgresql:12.5.0")
     implementation("com.github.seratch:kotliquery:1.9.1")
 
     // -- div
