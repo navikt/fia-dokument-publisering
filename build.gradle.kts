@@ -16,8 +16,8 @@ val kotlinVersion = "2.3.21"
 val ktorVersion = "3.4.3"
 val logbackVersion = "1.5.32"
 val logstashLogbackEncoderVersion = "9.0"
-val mockServerVersion = "2.50.6"
-val postgresqlVersion = "42.7.10"
+val mockServerVersion = "2.50.8"
+val postgresqlVersion = "42.7.11"
 val testcontainersVersion = "2.0.5"
 
 dependencies {
@@ -40,7 +40,7 @@ dependencies {
     // -- DB
     implementation("org.postgresql:postgresql:$postgresqlVersion")
     implementation("com.zaxxer:HikariCP:7.0.2")
-    implementation("org.flywaydb:flyway-database-postgresql:12.4.0")
+    implementation("org.flywaydb:flyway-database-postgresql:12.6.0")
     implementation("com.github.seratch:kotliquery:1.9.1")
 
     // -- div
@@ -66,7 +66,7 @@ dependencies {
     testImplementation("org.testcontainers:testcontainers-kafka:$testcontainersVersion")
     testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
     // Mock-oauth2-server
-    testImplementation("no.nav.security:mock-oauth2-server:3.0.1")
+    testImplementation("no.nav.security:mock-oauth2-server:3.0.3")
     // Mockserver neolight
     testImplementation("software.xdev.mockserver:testcontainers:$mockServerVersion")
     testImplementation("software.xdev.mockserver:client:$mockServerVersion")
@@ -101,7 +101,7 @@ dependencies {
                 require("1.84")
             }
             because(
-                "versjoner < 1.84 har sårbarhet. inkludert i no.nav.security:mock-oauth2-server:3.0.1",
+                "versjoner < 1.84 har sårbarhet. inkludert i no.nav.security:mock-oauth2-server:3.0.3",
             )
         }
         testImplementation("org.bouncycastle:bcpkix-jdk18on") {
@@ -109,7 +109,7 @@ dependencies {
                 require("1.84")
             }
             because(
-                "versjoner < 1.84 har sårbarhet. inkludert i no.nav.security:mock-oauth2-server:3.0.1",
+                "versjoner < 1.84 har sårbarhet. inkludert i no.nav.security:mock-oauth2-server:3.0.3",
             )
         }
     }
