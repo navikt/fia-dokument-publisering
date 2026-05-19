@@ -13,7 +13,7 @@ repositories {
 
 val kotestVersion = "6.1.11"
 val kotlinVersion = "2.3.21"
-val ktorVersion = "3.4.3"
+val ktorVersion = "3.5.0"
 val logbackVersion = "1.5.32"
 val logstashLogbackEncoderVersion = "9.0"
 val mockServerVersion = "2.50.8"
@@ -40,11 +40,11 @@ dependencies {
     // -- DB
     implementation("org.postgresql:postgresql:$postgresqlVersion")
     implementation("com.zaxxer:HikariCP:7.0.2")
-    implementation("org.flywaydb:flyway-database-postgresql:12.6.0")
+    implementation("org.flywaydb:flyway-database-postgresql:12.6.1")
     implementation("com.github.seratch:kotliquery:1.9.1")
 
     // -- div
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.8.0-0.6.x-compat")
 
     // Kafka
     implementation("at.yawk.lz4:lz4-java:1.11.0")
@@ -66,7 +66,7 @@ dependencies {
     testImplementation("org.testcontainers:testcontainers-kafka:$testcontainersVersion")
     testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
     // Mock-oauth2-server
-    testImplementation("no.nav.security:mock-oauth2-server:3.0.3")
+    testImplementation("no.nav.security:mock-oauth2-server:4.0.0")
     // Mockserver neolight
     testImplementation("software.xdev.mockserver:testcontainers:$mockServerVersion")
     testImplementation("software.xdev.mockserver:client:$mockServerVersion")
@@ -77,20 +77,20 @@ dependencies {
 
     constraints {
         implementation("org.mozilla:rhino") {
-            version { require("1.8.1") }
+            version { require("1.9.1") }
             because("versjonser < 1.8.1 har sårbarhet. inkludert i verapdf 1.28.2")
         }
         implementation("com.fasterxml.jackson.core:jackson-core") {
-            version { require("2.21.1") }
+            version { require("2.21.3") }
             because("versjoner < 2.21.1 har sårbarhet. inkludert i ktor-server-auth:3.4.0")
         }
         implementation("tools.jackson.core:jackson-core") {
-            version { require("3.1.1") }
+            version { require("3.1.3") }
             because("versjoner <= 3.1.0 har sårbarhet. inkludert i logstash-logback-encoder:9.0")
         }
         implementation("io.netty:netty-codec-http2") {
             version {
-                require("4.2.11.Final")
+                require("4.2.13.Final")
             }
             because(
                 "versjoner < 4.2.10.Final har sårbarhet. inkludert i ktor-server-netty-jvm:3.4.2",
