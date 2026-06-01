@@ -40,7 +40,7 @@ dependencies {
     // -- DB
     implementation("org.postgresql:postgresql:$postgresqlVersion")
     implementation("com.zaxxer:HikariCP:7.0.2")
-    implementation("org.flywaydb:flyway-database-postgresql:12.6.1")
+    implementation("org.flywaydb:flyway-database-postgresql:12.6.2")
     implementation("com.github.seratch:kotliquery:1.9.1")
 
     // -- div
