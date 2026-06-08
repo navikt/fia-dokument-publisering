@@ -14,9 +14,9 @@ repositories {
 val kotestVersion = "6.1.11"
 val kotlinVersion = "2.3.21"
 val ktorVersion = "3.5.0"
-val logbackVersion = "1.5.32"
+val logbackVersion = "1.5.33"
 val logstashLogbackEncoderVersion = "9.0"
-val mockServerVersion = "2.50.8"
+val mockServerVersion = "2.50.9"
 val postgresqlVersion = "42.7.11"
 val testcontainersVersion = "2.0.5"
 
@@ -40,7 +40,7 @@ dependencies {
     // -- DB
     implementation("org.postgresql:postgresql:$postgresqlVersion")
     implementation("com.zaxxer:HikariCP:7.0.2")
-    implementation("org.flywaydb:flyway-database-postgresql:12.6.1")
+    implementation("org.flywaydb:flyway-database-postgresql:12.7.0")
     implementation("com.github.seratch:kotliquery:1.9.1")
 
     // -- div
@@ -48,7 +48,7 @@ dependencies {
 
     // Kafka
     implementation("at.yawk.lz4:lz4-java:1.11.0")
-    implementation("org.apache.kafka:kafka-clients:4.2.0") {
+    implementation("org.apache.kafka:kafka-clients:4.3.0") {
         // "Fikser CVE-2025-12183 - lz4-java >1.8.1 har sårbar versjon (transitive dependency fra kafka-clients:4.1.0)"
         exclude("org.lz4", "lz4-java")
     }
@@ -71,7 +71,7 @@ dependencies {
     testImplementation("software.xdev.mockserver:testcontainers:$mockServerVersion")
     testImplementation("software.xdev.mockserver:client:$mockServerVersion")
     // JWT utilities
-    testImplementation("com.nimbusds:nimbus-jose-jwt:10.9")
+    testImplementation("com.nimbusds:nimbus-jose-jwt:10.9.1")
     // -- validere pdfa
     testImplementation("org.verapdf:validation-model:1.30.1")
 
