@@ -1,6 +1,6 @@
 plugins {
-    kotlin("jvm") version "2.3.21"
-    kotlin("plugin.serialization") version "2.3.21"
+    kotlin("jvm") version "2.4.0"
+    kotlin("plugin.serialization") version "2.4.0"
     id("application")
 }
 
@@ -12,9 +12,9 @@ repositories {
 }
 
 val kotestVersion = "6.1.11"
-val kotlinVersion = "2.3.21"
+val kotlinVersion = "2.4.0"
 val ktorVersion = "3.5.0"
-val logbackVersion = "1.5.33"
+val logbackVersion = "1.5.34"
 val logstashLogbackEncoderVersion = "9.0"
 val mockServerVersion = "2.50.9"
 val postgresqlVersion = "42.7.11"
@@ -40,7 +40,7 @@ dependencies {
     // -- DB
     implementation("org.postgresql:postgresql:$postgresqlVersion")
     implementation("com.zaxxer:HikariCP:7.0.2")
-    implementation("org.flywaydb:flyway-database-postgresql:12.7.0")
+    implementation("org.flywaydb:flyway-database-postgresql:12.8.1")
     implementation("com.github.seratch:kotliquery:1.9.1")
 
     // -- div
@@ -57,7 +57,7 @@ dependencies {
     implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
 
     // Funksjonelle operatorer
-    implementation("io.arrow-kt:arrow-core:2.2.2.1")
+    implementation("io.arrow-kt:arrow-core:2.2.3")
 
     // ----------- test
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
