@@ -13,11 +13,14 @@ repositories {
 
 val arrowCoreVersion = "2.2.3"
 val kafkaClientsVersion = "4.3.1"
-val kotestVersion = "6.1.11"
+val kotestVersion = "6.2.1"
 val kotlinVersion = "2.3.21"
 val ktorVersion = "3.5.0"
+val flywayVersion = "12.9.0"
+val hikariCPVersion = "7.1.0"
 val logbackVersion = "1.5.35"
 val logstashLogbackEncoderVersion = "9.0"
+val mockOAuth2ServerVersion = "5.0.1"
 val mockServerVersion = "2.50.9"
 val postgresqlVersion = "42.7.11"
 val testcontainersVersion = "2.0.5"
@@ -42,8 +45,8 @@ dependencies {
 
     // -- DB
     implementation("org.postgresql:postgresql:$postgresqlVersion")
-    implementation("com.zaxxer:HikariCP:7.0.2")
-    implementation("org.flywaydb:flyway-database-postgresql:12.7.0")
+    implementation("com.zaxxer:HikariCP:$hikariCPVersion")
+    implementation("org.flywaydb:flyway-database-postgresql:$flywayVersion")
     implementation("com.github.seratch:kotliquery:1.9.1")
 
     // -- div
@@ -51,7 +54,7 @@ dependencies {
 
     // Kafka
     implementation("at.yawk.lz4:lz4-java:1.11.0")
-    implementation("org.apache.kafka:kafka-clients:4.3.0") {
+    implementation("org.apache.kafka:kafka-clients:$kafkaClientsVersion") {
         // "Fikser CVE-2025-12183 - lz4-java >1.8.1 har sårbar versjon (transitive dependency fra kafka-clients:4.1.0)"
         exclude("org.lz4", "lz4-java")
     }
@@ -69,7 +72,7 @@ dependencies {
     testImplementation("org.testcontainers:testcontainers-kafka:$testcontainersVersion")
     testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
     // Mock-oauth2-server
-    testImplementation("no.nav.security:mock-oauth2-server:4.0.0")
+    testImplementation("no.nav.security:mock-oauth2-server:$mockOAuth2ServerVersion")
     // Mockserver neolight
     testImplementation("software.xdev.mockserver:testcontainers:$mockServerVersion")
     testImplementation("software.xdev.mockserver:client:$mockServerVersion")
@@ -84,11 +87,11 @@ dependencies {
             because("versjonser < 1.8.1 har sårbarhet. inkludert i verapdf 1.28.2")
         }
         implementation("com.fasterxml.jackson.core:jackson-core") {
-            version { require("2.21.3") }
+            version { require("2.22.0") }
             because("versjoner < 2.21.1 har sårbarhet. inkludert i ktor-server-auth:3.4.0")
         }
         implementation("tools.jackson.core:jackson-core") {
-            version { require("3.1.3") }
+            version { require("3.2.0") }
             because("versjoner <= 3.1.0 har sårbarhet. inkludert i logstash-logback-encoder:9.0")
         }
         implementation("io.netty:netty-codec-http2") {
