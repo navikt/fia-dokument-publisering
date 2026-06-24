@@ -11,14 +11,17 @@ repositories {
     maven(url = "https://jitpack.io")
 }
 
+val arrowCoreVersion = "2.2.3"
+val kafkaClientsVersion = "4.3.1"
 val kotestVersion = "6.1.11"
 val kotlinVersion = "2.3.21"
 val ktorVersion = "3.5.0"
-val logbackVersion = "1.5.33"
+val logbackVersion = "1.5.35"
 val logstashLogbackEncoderVersion = "9.0"
 val mockServerVersion = "2.50.9"
 val postgresqlVersion = "42.7.11"
 val testcontainersVersion = "2.0.5"
+val veraPdfVersion = "1.30.2"
 
 dependencies {
     // -- ktor
@@ -57,7 +60,7 @@ dependencies {
     implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
 
     // Funksjonelle operatorer
-    implementation("io.arrow-kt:arrow-core:2.2.2.1")
+    implementation("io.arrow-kt:arrow-core:$arrowCoreVersion")
 
     // ----------- test
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
@@ -73,7 +76,7 @@ dependencies {
     // JWT utilities
     testImplementation("com.nimbusds:nimbus-jose-jwt:10.9.1")
     // -- validere pdfa
-    testImplementation("org.verapdf:validation-model:1.30.1")
+    testImplementation("org.verapdf:validation-model:$veraPdfVersion")
 
     constraints {
         implementation("org.mozilla:rhino") {
@@ -90,7 +93,7 @@ dependencies {
         }
         implementation("io.netty:netty-codec-http2") {
             version {
-                require("4.2.13.Final")
+                require("4.2.15.Final")
             }
             because(
                 "versjoner < 4.2.10.Final har sårbarhet. inkludert i ktor-server-netty-jvm:3.4.2",
