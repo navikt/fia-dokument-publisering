@@ -1,6 +1,6 @@
 plugins {
-    kotlin("jvm") version "2.4.0"
-    kotlin("plugin.serialization") version "2.4.0"
+    kotlin("jvm") version "2.3.21"
+    kotlin("plugin.serialization") version "2.3.21"
     id("application")
 }
 
@@ -14,7 +14,7 @@ repositories {
 val arrowCoreVersion = "2.2.3"
 val kafkaClientsVersion = "4.3.1"
 val kotestVersion = "6.2.1"
-val kotlinVersion = "2.4.0"
+val kotlinVersion = "2.3.21"
 val ktorVersion = "3.5.0"
 val flywayVersion = "12.9.0"
 val hikariCPVersion = "7.1.0"
