@@ -8,3 +8,7 @@ kafkaPool: nav-prod
 journalpostHost: dokarkiv.prod-fss-pub.nais.io
 journalpostApi: https://dokarkiv.prod-fss-pub.nais.io/rest/journalpostapi/v1/journalpost
 journalpostScope: api://prod-fss.teamdokumenthandtering.dokarkiv/.default
+db_flags:
+  cloudsql.enable_pgaudit: "true"
+  pgaudit.log: 'write,ddl,role'
+  pgaudit.log_parameter: "on"
