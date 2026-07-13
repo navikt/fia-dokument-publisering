@@ -1,6 +1,6 @@
 plugins {
-    kotlin("jvm") version "2.3.21"
-    kotlin("plugin.serialization") version "2.3.21"
+    kotlin("jvm") version "2.4.0"
+    kotlin("plugin.serialization") version "2.4.0"
     id("application")
 }
 
@@ -14,15 +14,15 @@ repositories {
 val arrowCoreVersion = "2.2.3"
 val kafkaClientsVersion = "4.3.1"
 val kotestVersion = "6.2.1"
-val kotlinVersion = "2.3.21"
-val ktorVersion = "3.5.0"
-val flywayVersion = "12.9.0"
+val kotlinVersion = "2.4.0"
+val ktorVersion = "3.5.1"
+val flywayVersion = "12.10.0"
 val hikariCPVersion = "7.1.0"
-val logbackVersion = "1.5.35"
+val logbackVersion = "1.5.37"
 val logstashLogbackEncoderVersion = "9.0"
-val mockOAuth2ServerVersion = "5.0.1"
-val mockServerVersion = "2.50.9"
-val postgresqlVersion = "42.7.11"
+val mockOAuth2ServerVersion = "5.0.2"
+val mockServerVersion = "2.51.0"
+val postgresqlVersion = "42.7.12"
 val testcontainersVersion = "2.0.5"
 val veraPdfVersion = "1.30.2"
 
