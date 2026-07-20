@@ -13,16 +13,16 @@ repositories {
 
 val arrowCoreVersion = "2.2.3"
 val kafkaClientsVersion = "4.3.1"
-val kotestVersion = "6.2.1"
+val kotestVersion = "6.2.2"
 val kotlinVersion = "2.4.0"
 val ktorVersion = "3.5.1"
-val flywayVersion = "12.10.0"
+val flywayVersion = "12.11.0"
 val hikariCPVersion = "7.1.0"
-val logbackVersion = "1.5.37"
+val logbackVersion = "1.5.38"
 val logstashLogbackEncoderVersion = "9.0"
 val mockOAuth2ServerVersion = "5.0.2"
 val mockServerVersion = "2.51.0"
-val postgresqlVersion = "42.7.12"
+val postgresqlVersion = "42.7.13"
 val testcontainersVersion = "2.0.5"
 val veraPdfVersion = "1.30.2"
 
@@ -53,7 +53,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.8.0-0.6.x-compat")
 
     // Kafka
-    implementation("at.yawk.lz4:lz4-java:1.11.0")
+    implementation("at.yawk.lz4:lz4-java:1.11.1")
     implementation("org.apache.kafka:kafka-clients:$kafkaClientsVersion") {
         // "Fikser CVE-2025-12183 - lz4-java >1.8.1 har sårbar versjon (transitive dependency fra kafka-clients:4.1.0)"
         exclude("org.lz4", "lz4-java")
