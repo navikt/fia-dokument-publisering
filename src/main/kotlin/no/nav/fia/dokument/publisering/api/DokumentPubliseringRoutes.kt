@@ -1,13 +1,13 @@
 package no.nav.fia.dokument.publisering.api
 
-import DokumentService
+import no.nav.fia.dokument.publisering.domene.DokumentService
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
-import tilDto
-import tilUUID
+import no.nav.fia.dokument.publisering.domene.tilDto
+import no.nav.fia.dokument.publisering.domene.tilUUID
 
 const val DOKUMENT_PUBLISERING_PATH = "/dokument"
 

@@ -1,6 +1,6 @@
 package no.nav.fia.dokument.publisering.kafka
 
-import ApplikasjonsHelse
+import no.nav.fia.dokument.publisering.helse.ApplikasjonsHelse
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope

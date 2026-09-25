@@ -1,7 +1,7 @@
 package no.nav.fia.dokument.publisering
 
-import ApplikasjonsHelse
-import DokumentService
+import no.nav.fia.dokument.publisering.helse.ApplikasjonsHelse
+import no.nav.fia.dokument.publisering.domene.DokumentService
 import io.ktor.server.application.Application
 import io.ktor.server.auth.authenticate
 import io.ktor.server.routing.routing

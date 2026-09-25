@@ -22,10 +22,10 @@ import no.nav.fia.dokument.publisering.journalpost.Sak
 import no.nav.fia.dokument.publisering.journalpost.Sakstype
 import no.nav.fia.dokument.publisering.journalpost.Variantformat
 import no.nav.fia.dokument.publisering.kafka.dto.DokumentKafkaDto
-import tilUUID
 import java.util.UUID
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import no.nav.fia.dokument.publisering.domene.tilUUID
 
 class DokumentApiTest {
     @BeforeTest

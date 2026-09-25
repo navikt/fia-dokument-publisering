@@ -1,7 +1,7 @@
 package no.nav.fia.dokument.publisering
 
-import ApplikasjonsHelse
-import DokumentService
+import no.nav.fia.dokument.publisering.helse.ApplikasjonsHelse
+import no.nav.fia.dokument.publisering.domene.DokumentService
 import io.ktor.http.HttpHeaders
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application

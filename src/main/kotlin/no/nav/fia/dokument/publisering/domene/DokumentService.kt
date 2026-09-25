@@ -1,3 +1,5 @@
+package no.nav.fia.dokument.publisering.domene
+
 import arrow.core.Either
 import arrow.core.left
 import arrow.core.right
@@ -7,7 +9,7 @@ import kotlinx.datetime.toKotlinLocalDateTime
 import kotlinx.serialization.json.Json
 import no.nav.fia.dokument.publisering.api.DokumentDto
 import no.nav.fia.dokument.publisering.db.DokumentRepository
-import no.nav.fia.dokument.publisering.domene.Dokument
+import no.nav.fia.dokument.publisering.domene.Dokument.Status
 import no.nav.fia.dokument.publisering.journalpost.JournalpostService
 import no.nav.fia.dokument.publisering.kafka.KvitteringDto
 import no.nav.fia.dokument.publisering.kafka.KvitteringProdusent
@@ -64,7 +66,7 @@ class DokumentService(
                 )
                 dokumentRepository.oppdaterDokument(
                     dokumentId = dokument.dokumentId,
-                    status = Dokument.Status.PUBLISERT,
+                    status = Status.PUBLISERT,
                     journalpostId = journalpostResultat.journalpostId,
                     publisertDato = journalføringDato,
                 )
@@ -85,7 +87,7 @@ class DokumentService(
                 )
                 dokumentRepository.oppdaterDokument(
                     dokumentId = dokument.dokumentId,
-                    status = Dokument.Status.FEILET_JOURNALFØRING,
+                    status = Status.FEILET_JOURNALFØRING,
                 )
             }
         }
@@ -102,7 +104,7 @@ fun DokumentKafkaDto.tilDomene(): Dokument =
         referanseId = UUID.fromString(referanseId),
         type = type,
         opprettetAv = dokumentOpprettetAv,
-        status = Dokument.Status.OPPRETTET,
+        status = Status.OPPRETTET,
         orgnr = virksomhet.orgnummer,
         saksnummer = sak.saksnummer,
         samarbeidId = samarbeid.id,
