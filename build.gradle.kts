@@ -11,13 +11,13 @@ repositories {
     maven(url = "https://jitpack.io")
 }
 
-val arrowCoreVersion = "2.2.3"
+val arrowCoreVersion = "2.3.0"
 val kafkaClientsVersion = "4.4.0"
-val kotestVersion = "6.2.5"
+val kotestVersion = "6.2.6"
 val kotliQueryVersion = "1.9.1"
 val kotlinVersion = "2.4.21"
 val ktorVersion = "3.6.1"
-val flywayVersion = "13.10.0"
+val flywayVersion = "13.12.0"
 val hikariCPVersion = "7.1.0"
 val logbackVersion = "1.6.6"
 val logstashLogbackEncoderVersion = "9.0"
@@ -94,7 +94,7 @@ dependencies {
             because("Sikkerhetsoppdatering av transitiv avhengighet")
         }
         implementation("org.mozilla:rhino") {
-            version { require("1.9.1") }
+            version { require("1.9.2") }
             because("versjonser < 1.8.1 har sårbarhet. inkludert i verapdf 1.28.2")
         }
         implementation("com.fasterxml.jackson.core:jackson-core") {
