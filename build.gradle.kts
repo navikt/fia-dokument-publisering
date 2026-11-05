@@ -11,7 +11,7 @@ repositories {
     maven(url = "https://jitpack.io")
 }
 
-val arrowCoreVersion = "2.3.0"
+val arrowCoreVersion = "2.3.0.1"
 val kafkaClientsVersion = "4.4.0"
 val kotestVersion = "6.2.6"
 val kotliQueryVersion = "1.9.1"
