@@ -25,16 +25,34 @@ class PdfgenContainerTest {
     internal fun setup() = VeraGreenfieldFoundryProvider.initialise()
 
     @Test
-    fun `valider at genererte pdfer er i pdf-a format`() {
-        val referanseId = "2e84469f-5224-4d85-9f8b-43965502df32"
+    fun `valider at genererte pdf for samarbeidsplan er i pdf-a format`() {
+        assertGenerertPdfErValid(
+            pdfDokReferanseId = UUID.randomUUID().toString(),
+            innholdTilDokument = getInnholdForSamarbeidsplan(samarbeidsplanReferanseId = UUID.randomUUID().toString()),
+            PdfType.SAMARBEIDSPLAN
+        )
+    }
 
-        assertGenerertPdfErValid(referanseId, getInnholdForBehovsvurdering(referanseId), PdfType.BEHOVSVURDERING)
-        assertGenerertPdfErValid(referanseId, getInnholdForSamarbeidsplan(referanseId), PdfType.SAMARBEIDSPLAN)
-        assertGenerertPdfErValid(referanseId, getInnholdForEvaluering(referanseId), PdfType.EVALUERING)
+    @Test
+    fun `valider at genererte pdf for behovsvurdering er i pdf-a format`() {
+        assertGenerertPdfErValid(
+            pdfDokReferanseId = UUID.randomUUID().toString(),
+            innholdTilDokument = getInnholdForBehovsvurdering(behovsvurderingReferanseId = UUID.randomUUID().toString()),
+            PdfType.BEHOVSVURDERING
+        )
+    }
+
+    @Test
+    fun `valider at genererte pdf for evaluering er i pdf-a format`() {
+        assertGenerertPdfErValid(
+            pdfDokReferanseId = UUID.randomUUID().toString(),
+            innholdTilDokument = getInnholdForEvaluering(evalueringReferanseId = UUID.randomUUID().toString()),
+            pdfType = PdfType.EVALUERING
+        )
     }
 
     private fun assertGenerertPdfErValid(
-        referanseId: String,
+        pdfDokReferanseId: String,
         innholdTilDokument: String,
         pdfType: PdfType,
     ) {
@@ -42,7 +60,7 @@ class PdfgenContainerTest {
             val pdf = pdfgenContainer.hentDokumentPdf(
                 dokument = PdfDokumentDto(
                     type = pdfType,
-                    referanseId = referanseId,
+                    referanseId = pdfDokReferanseId,
                     publiseringsdato = LocalDateTime.parse("2025-07-02T10:52:03"),
                     sak = SakDto(
                         saksnummer = "01HXXPFZFNRKD41JWHAY321BEZ",
@@ -70,11 +88,11 @@ class PdfgenContainerTest {
         }
     }
 
-    fun getInnholdForBehovsvurdering(referanseId: String): String =
+    fun getInnholdForBehovsvurdering(behovsvurderingReferanseId: String): String =
         Json.encodeToString(
             serializer = SpørreundersøkelseInnholdTilPdfGenDto.serializer(),
             value = SpørreundersøkelseInnholdTilPdfGenDto(
-                id = referanseId,
+                id = behovsvurderingReferanseId,
                 fullførtTidspunkt = LocalDateTime.parse("2025-07-01T15:44:11"),
                 spørsmålMedSvarPerTema = listOf(
                     TemaResultatDto(
@@ -107,11 +125,11 @@ class PdfgenContainerTest {
             ),
         )
 
-    fun getInnholdForSamarbeidsplan(referanseId: String): String =
+    fun getInnholdForSamarbeidsplan(samarbeidsplanReferanseId: String): String =
         Json.encodeToString(
             serializer = SpørreundersøkelseInnholdTilPdfGenDto.serializer(),
             value = SpørreundersøkelseInnholdTilPdfGenDto(
-                id = referanseId,
+                id = samarbeidsplanReferanseId,
                 fullførtTidspunkt = LocalDateTime.parse("2025-07-01T15:44:11"),
                 spørsmålMedSvarPerTema = listOf(
                     TemaResultatDto(
@@ -144,11 +162,11 @@ class PdfgenContainerTest {
             ),
         )
 
-    fun getInnholdForEvaluering(referanseId: String): String =
+    fun getInnholdForEvaluering(evalueringReferanseId: String): String =
         Json.encodeToString(
             serializer = SpørreundersøkelseInnholdTilPdfGenDto.serializer(),
             value = SpørreundersøkelseInnholdTilPdfGenDto(
-                id = referanseId,
+                id = evalueringReferanseId,
                 fullførtTidspunkt = LocalDateTime.parse("2025-07-01T15:44:11"),
                 spørsmålMedSvarPerTema = listOf(
                     TemaResultatDto(

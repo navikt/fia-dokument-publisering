@@ -1,8 +1,10 @@
 package no.nav.fia.dokument.publisering.helper
 
+import io.ktor.client.plugins.timeout
 import io.ktor.client.request.header
 import io.ktor.client.statement.readRawBytes
 import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpStatusCode
 import kotlinx.serialization.json.Json
 import no.nav.fia.dokument.publisering.pdfgen.PdfDokumentDto
 import no.nav.fia.dokument.publisering.pdfgen.PdfType
@@ -10,9 +12,11 @@ import org.slf4j.Logger
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.Network
 import org.testcontainers.containers.output.Slf4jLogConsumer
-import org.testcontainers.containers.wait.strategy.HostPortWaitStrategy
+import org.testcontainers.containers.wait.strategy.Wait
 import org.testcontainers.utility.DockerImageName
+import java.time.Duration
 import java.util.TimeZone
+import kotlin.test.assertEquals
 
 class PdfgenContainerHelper(
     network: Network,
@@ -29,7 +33,10 @@ class PdfgenContainerHelper(
         .withNetworkAliases(networkAlias)
         .withCreateContainerCmdModifier { cmd -> cmd.withName("$networkAlias-${System.currentTimeMillis()}") }
         .waitingFor(
-            HostPortWaitStrategy(),
+            Wait.forHttp("/internal/is_ready")
+                .forPort(port)
+                .forStatusCode(HttpStatusCode.OK.value)
+                .withStartupTimeout(Duration.ofSeconds(60)),
         )
         .withLogConsumer(
             Slf4jLogConsumer(log)
@@ -62,8 +69,14 @@ class PdfgenContainerHelper(
             body = json,
             config = {
                 header(HttpHeaders.ContentType, "application/json")
+                timeout {
+                    connectTimeoutMillis = 5_000
+                    requestTimeoutMillis = 60_000
+                    socketTimeoutMillis = 60_000
+                }
             },
         )
+        assertEquals(HttpStatusCode.OK, response.status, "PDF generation failed")
         return response.readRawBytes()
     }
 }
