@@ -11,19 +11,19 @@ repositories {
     maven(url = "https://jitpack.io")
 }
 
-val arrowCoreVersion = "2.3.0"
+val arrowCoreVersion = "2.3.0.1"
 val kafkaClientsVersion = "4.4.0"
 val kotestVersion = "6.2.6"
 val kotliQueryVersion = "1.9.1"
 val kotlinVersion = "2.4.21"
 val ktorVersion = "3.6.1"
-val flywayVersion = "13.12.0"
+val flywayVersion = "13.12.1"
 val hikariCPVersion = "7.1.0"
 val logbackVersion = "1.6.6"
 val logstashLogbackEncoderVersion = "9.0"
-val lz4JavaVersion = "1.13.0"
+val lz4JavaVersion = "1.14.0"
 val mockOAuth2ServerVersion = "6.1.4"
-val mockServerVersion = "2.52.1"
+val mockServerVersion = "2.52.2"
 val nimbusJoseJwtVersion = "10.10"
 val postgresqlVersion = "42.7.14"
 val testcontainersVersion = "2.0.5"
@@ -98,11 +98,11 @@ dependencies {
             because("versjonser < 1.8.1 har sårbarhet. inkludert i verapdf 1.28.2")
         }
         implementation("com.fasterxml.jackson.core:jackson-core") {
-            version { require("2.22.4") }
+            version { require("2.23.0") }
             because("versjoner < 2.22.1 har sårbarhet. inkludert i ktor-server-auth:3.4.0")
         }
         implementation("tools.jackson.core:jackson-core") {
-            version { require("3.2.4") }
+            version { require("3.3.0") }
             because("versjoner <= 3.2.0 har sårbarhet. inkludert i logstash-logback-encoder:9.0")
         }
         implementation("io.netty:netty-codec-http2") {
