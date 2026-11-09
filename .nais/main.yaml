@@ -50,11 +50,13 @@ spec:
         diskAutoresize: {{dbAutoresizeDisk}}
         databases:
           - name: fia-dokument-publisering-db
+        {{#if db_flags}}
         flags:
         {{#each db_flags}}
            - name: {{@key}}
              value: "{{this}}"
         {{/each}}
+        {{/if}}
   observability:
     autoInstrumentation:
       enabled: true
