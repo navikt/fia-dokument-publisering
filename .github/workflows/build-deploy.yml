@@ -1,5 +1,10 @@
 name: Build fia-dokument-publisering
-on: [ push ]
+on:
+  push:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 6 * * *'
+      timezone: Europe/Oslo
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
