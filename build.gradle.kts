@@ -13,21 +13,21 @@ repositories {
 
 val arrowCoreVersion = "2.3.0.1"
 val kafkaClientsVersion = "4.4.0"
-val kotestVersion = "6.2.6"
+val kotestVersion = "6.2.7"
 val kotliQueryVersion = "1.9.1"
 val kotlinVersion = "2.4.21"
 val ktorVersion = "3.6.1"
-val flywayVersion = "13.12.1"
+val flywayVersion = "13.12.2"
 val hikariCPVersion = "7.1.0"
-val logbackVersion = "1.6.6"
+val logbackVersion = "1.6.7"
 val logstashLogbackEncoderVersion = "9.0"
 val lz4JavaVersion = "1.14.0"
-val mockOAuth2ServerVersion = "6.1.4"
+val mockOAuth2ServerVersion = "7.0.0"
 val mockServerVersion = "2.52.2"
 val nimbusJoseJwtVersion = "10.10"
 val postgresqlVersion = "42.7.14"
 val testcontainersVersion = "2.0.5"
-val veraPdfVersion = "1.30.3"
+val veraPdfVersion = "1.30.4"
 
 dependencies {
     // -- ktor
